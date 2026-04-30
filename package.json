@@ -1,0 +1,27 @@
+{
+  "name": "tessera",
+  "version": "1.0.0",
+  "description": "Web app where you can build your CV using widgets in Bento Style",
+  "private": true,
+  "homepage": "https://github.com/ChobotarCostyantin/Tessera#readme",
+  "bugs": {
+    "url": "https://github.com/ChobotarCostyantin/Tessera/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChobotarCostyantin/Tessera.git"
+  },
+  "license": "MIT",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "author": "Chobotar Kostiantyn",
+  "scripts": {
+    "fe:dev": "npm run dev -w frontend",
+    "be:dev": "npm run start:dev -w backend",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "lint": "npm run lint -w backend && npm run lint -w frontend",
+    "format": "npm run format -w backend && npm run format -w frontend"
+  }
+}
