@@ -17,9 +17,15 @@ import { CSS } from '@dnd-kit/utilities';
 import { Widget, WidgetLayout } from '@/types/widget';
 import { WidgetRenderer } from './WidgetRenderer';
 import {
-    GRID_COLS, GRID_ROWS, CELL_PX, GAP_PX,
-    CANVAS_W, CANVAS_H,
-    gridToPx, pxToGrid, gridToOffset,
+    GRID_COLS,
+    GRID_ROWS,
+    CELL_PX,
+    GAP_PX,
+    CANVAS_W,
+    CANVAS_H,
+    gridToPx,
+    pxToGrid,
+    gridToOffset,
 } from '@/lib/widgetConfig';
 
 interface BentoGridProps {
@@ -50,7 +56,12 @@ interface ResizeHandleProps {
 }
 
 function ResizeHandle({ widgetId, layout, onResize }: ResizeHandleProps) {
-    const startRef = useRef<{ mouseX: number; mouseY: number; w: number; h: number } | null>(null);
+    const startRef = useRef<{
+        mouseX: number;
+        mouseY: number;
+        w: number;
+        h: number;
+    } | null>(null);
 
     const onMouseDown = useCallback(
         (e: React.MouseEvent) => {
@@ -58,7 +69,12 @@ function ResizeHandle({ widgetId, layout, onResize }: ResizeHandleProps) {
             e.preventDefault();
 
             // Store initial values on mouse down
-            startRef.current = { mouseX: e.clientX, mouseY: e.clientY, w: layout.w, h: layout.h };
+            startRef.current = {
+                mouseX: e.clientX,
+                mouseY: e.clientY,
+                w: layout.w,
+                h: layout.h,
+            };
 
             const onMouseMove = (ev: MouseEvent) => {
                 if (!startRef.current) return;
@@ -72,8 +88,14 @@ function ResizeHandle({ widgetId, layout, onResize }: ResizeHandleProps) {
                 const deltaH = Math.round(dy / (CELL_PX + GAP_PX));
 
                 // Apply constraints to avoid negative sizes or expanding out of grid bounds
-                const newW = Math.min(GRID_COLS - layout.x, Math.max(1, startRef.current.w + deltaW));
-                const newH = Math.min(GRID_ROWS - layout.y, Math.max(1, startRef.current.h + deltaH));
+                const newW = Math.min(
+                    GRID_COLS - layout.x,
+                    Math.max(1, startRef.current.w + deltaW),
+                );
+                const newH = Math.min(
+                    GRID_ROWS - layout.y,
+                    Math.max(1, startRef.current.h + deltaH),
+                );
 
                 onResize(widgetId, newW, newH);
             };
@@ -99,8 +121,20 @@ function ResizeHandle({ widgetId, layout, onResize }: ResizeHandleProps) {
             {/* SE resize dots */}
             <svg width="8" height="8" viewBox="0 0 8 8" fill="none">
                 <circle cx="7" cy="7" r="1" fill="var(--t-accent2)" />
-                <circle cx="4" cy="7" r="1" fill="var(--t-accent2)" opacity="0.5" />
-                <circle cx="7" cy="4" r="1" fill="var(--t-accent2)" opacity="0.5" />
+                <circle
+                    cx="4"
+                    cy="7"
+                    r="1"
+                    fill="var(--t-accent2)"
+                    opacity="0.5"
+                />
+                <circle
+                    cx="7"
+                    cy="4"
+                    r="1"
+                    fill="var(--t-accent2)"
+                    opacity="0.5"
+                />
             </svg>
         </div>
     );
@@ -116,7 +150,15 @@ interface WidgetCellProps {
     isDragging: boolean;
 }
 
-function WidgetCell({ widget, layout, isSelected, onSelect, onDelete, onResize, isDragging }: WidgetCellProps) {
+function WidgetCell({
+    widget,
+    layout,
+    isSelected,
+    onSelect,
+    onDelete,
+    onResize,
+    isDragging,
+}: WidgetCellProps) {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: widget.id,
         data: { layout },
@@ -135,7 +177,12 @@ function WidgetCell({ widget, layout, isSelected, onSelect, onDelete, onResize, 
     };
 
     return (
-        <div ref={setNodeRef} style={style} className="group" onClick={onSelect}>
+        <div
+            ref={setNodeRef}
+            style={style}
+            className="group"
+            onClick={onSelect}
+        >
             <div
                 className="relative w-full h-full rounded-[14px] overflow-hidden"
                 style={{
@@ -143,7 +190,9 @@ function WidgetCell({ widget, layout, isSelected, onSelect, onDelete, onResize, 
                     border: isSelected
                         ? '1.5px solid var(--t-accent2)'
                         : '0.5px solid var(--t-border)',
-                    boxShadow: isSelected ? '0 0 0 1px var(--t-accent2)' : 'none',
+                    boxShadow: isSelected
+                        ? '0 0 0 1px var(--t-accent2)'
+                        : 'none',
                     padding: '16px',
                 }}
             >
@@ -152,12 +201,19 @@ function WidgetCell({ widget, layout, isSelected, onSelect, onDelete, onResize, 
                     {...listeners}
                     {...attributes}
                     className="absolute inset-x-0 top-0 h-6 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-150 cursor-grab active:cursor-grabbing z-10"
-                    style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.18), transparent)' }}
+                    style={{
+                        background:
+                            'linear-gradient(to bottom, rgba(0,0,0,0.18), transparent)',
+                    }}
                     onClick={(e) => e.stopPropagation()}
                 >
                     <div className="flex gap-0.5">
                         {[...Array(6)].map((_, i) => (
-                            <div key={i} className="w-0.5 h-0.5 rounded-full" style={{ background: 'rgba(255,255,255,0.5)' }} />
+                            <div
+                                key={i}
+                                className="w-0.5 h-0.5 rounded-full"
+                                style={{ background: 'rgba(255,255,255,0.5)' }}
+                            />
                         ))}
                     </div>
                 </div>
@@ -165,10 +221,20 @@ function WidgetCell({ widget, layout, isSelected, onSelect, onDelete, onResize, 
                 {/* Delete button */}
                 <button
                     className="absolute top-2 right-2 w-5 h-5 rounded-md text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
-                    style={{ background: 'rgba(255,80,80,0.15)', color: 'rgba(255,100,100,0.8)', border: 'none', cursor: 'pointer' }}
+                    style={{
+                        background: 'rgba(255,80,80,0.15)',
+                        color: 'rgba(255,100,100,0.8)',
+                        border: 'none',
+                        cursor: 'pointer',
+                    }}
                     onMouseDown={(e) => e.stopPropagation()}
-                    onClick={(e) => { e.stopPropagation(); onDelete(); }}
-                >✕</button>
+                    onClick={(e) => {
+                        e.stopPropagation();
+                        onDelete();
+                    }}
+                >
+                    ✕
+                </button>
 
                 {/* Content */}
                 <div className="w-full h-full">
@@ -176,13 +242,23 @@ function WidgetCell({ widget, layout, isSelected, onSelect, onDelete, onResize, 
                 </div>
 
                 {/* Resize handle */}
-                <ResizeHandle widgetId={widget.id} layout={layout} onResize={onResize} />
+                <ResizeHandle
+                    widgetId={widget.id}
+                    layout={layout}
+                    onResize={onResize}
+                />
             </div>
         </div>
     );
 }
 
-function DragGhost({ widget, layout }: { widget: Widget; layout: WidgetLayout }) {
+function DragGhost({
+    widget,
+    layout,
+}: {
+    widget: Widget;
+    layout: WidgetLayout;
+}) {
     return (
         <div
             style={{
@@ -202,14 +278,28 @@ function DragGhost({ widget, layout }: { widget: Widget; layout: WidgetLayout })
     );
 }
 
-export function BentoGrid({ widgets, layouts, selectedId, onSelect, onDelete, onLayoutChange }: BentoGridProps) {
+export function BentoGrid({
+    widgets,
+    layouts,
+    selectedId,
+    onSelect,
+    onDelete,
+    onLayoutChange,
+}: BentoGridProps) {
     const canvasRef = useRef<HTMLDivElement>(null);
     const [draggingId, setDraggingId] = useState<string | null>(null);
-    const [dropPreview, setDropPreview] = useState<{ x: number; y: number; w: number; h: number } | null>(null);
+    const [dropPreview, setDropPreview] = useState<{
+        x: number;
+        y: number;
+        w: number;
+        h: number;
+    } | null>(null);
 
     const sensors = useSensors(
         useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
-        useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 5 } }),
+        useSensor(TouchSensor, {
+            activationConstraint: { delay: 150, tolerance: 5 },
+        }),
     );
 
     const getLayout = (id: string) => layouts.find((l) => l.id === id)!;
@@ -219,11 +309,30 @@ export function BentoGrid({ widgets, layouts, selectedId, onSelect, onDelete, on
     }, []);
 
     const handleDragMove = useCallback(
-        (event: { active: { id: string }; delta: { x: number; y: number } }) => {
+        (event: {
+            active: { id: string };
+            delta: { x: number; y: number };
+        }) => {
             const layout = getLayout(event.active.id);
             if (!layout) return;
-            const newX = Math.max(0, Math.min(GRID_COLS - layout.w, layout.x + pxToGrid(event.delta.x + (CELL_PX + GAP_PX) / 2) - (layout.w > 1 ? 0 : 0)));
-            const newY = Math.max(0, Math.min(GRID_ROWS - layout.h, layout.y + pxToGrid(event.delta.y + (CELL_PX + GAP_PX) / 2) - (layout.h > 1 ? 0 : 0)));
+            const newX = Math.max(
+                0,
+                Math.min(
+                    GRID_COLS - layout.w,
+                    layout.x +
+                        pxToGrid(event.delta.x + (CELL_PX + GAP_PX) / 2) -
+                        (layout.w > 1 ? 0 : 0),
+                ),
+            );
+            const newY = Math.max(
+                0,
+                Math.min(
+                    GRID_ROWS - layout.h,
+                    layout.y +
+                        pxToGrid(event.delta.y + (CELL_PX + GAP_PX) / 2) -
+                        (layout.h > 1 ? 0 : 0),
+                ),
+            );
             setDropPreview({ x: newX, y: newY, w: layout.w, h: layout.h });
         },
         [layouts],
@@ -233,12 +342,22 @@ export function BentoGrid({ widgets, layouts, selectedId, onSelect, onDelete, on
         (event: DragEndEvent) => {
             const { active, delta } = event;
             const layout = getLayout(active.id as string);
-            if (!layout) { setDraggingId(null); setDropPreview(null); return; }
+            if (!layout) {
+                setDraggingId(null);
+                setDropPreview(null);
+                return;
+            }
 
             const snapX = Math.round(delta.x / (CELL_PX + GAP_PX));
             const snapY = Math.round(delta.y / (CELL_PX + GAP_PX));
-            const newX = Math.max(0, Math.min(GRID_COLS - layout.w, layout.x + snapX));
-            const newY = Math.max(0, Math.min(GRID_ROWS - layout.h, layout.y + snapY));
+            const newX = Math.max(
+                0,
+                Math.min(GRID_COLS - layout.w, layout.x + snapX),
+            );
+            const newY = Math.max(
+                0,
+                Math.min(GRID_ROWS - layout.h, layout.y + snapY),
+            );
 
             onLayoutChange(
                 layouts.map((l) =>
@@ -253,12 +372,16 @@ export function BentoGrid({ widgets, layouts, selectedId, onSelect, onDelete, on
 
     const handleResize = useCallback(
         (id: string, w: number, h: number) => {
-            onLayoutChange(layouts.map((l) => (l.id === id ? { ...l, w, h } : l)));
+            onLayoutChange(
+                layouts.map((l) => (l.id === id ? { ...l, w, h } : l)),
+            );
         },
         [layouts, onLayoutChange],
     );
 
-    const draggingWidget = draggingId ? widgets.find((w) => w.id === draggingId) : null;
+    const draggingWidget = draggingId
+        ? widgets.find((w) => w.id === draggingId)
+        : null;
     const draggingLayout = draggingId ? getLayout(draggingId) : null;
 
     return (
@@ -273,15 +396,26 @@ export function BentoGrid({ widgets, layouts, selectedId, onSelect, onDelete, on
         >
             {/* Hint bar */}
             <div className="flex items-center gap-2 mb-4">
-                <span className="text-[11px]" style={{ color: 'var(--t-muted)' }}>
+                <span
+                    className="text-[11px]"
+                    style={{ color: 'var(--t-muted)' }}
+                >
                     Bento Grid — {GRID_COLS} cols × {GRID_ROWS} rows
                 </span>
-                <span className="text-[11px]" style={{ color: 'rgba(200,255,87,0.5)' }}>
+                <span
+                    className="text-[11px]"
+                    style={{ color: 'rgba(200,255,87,0.5)' }}
+                >
                     drag handle to move · bottom-right corner to resize
                 </span>
             </div>
 
-            <DndContext sensors={sensors} onDragStart={handleDragStart} onDragMove={handleDragMove as any} onDragEnd={handleDragEnd}>
+            <DndContext
+                sensors={sensors}
+                onDragStart={handleDragStart}
+                onDragMove={handleDragMove as any}
+                onDragEnd={handleDragEnd}
+            >
                 {/* Canvas */}
                 <div
                     ref={canvasRef}
@@ -294,14 +428,22 @@ export function BentoGrid({ widgets, layouts, selectedId, onSelect, onDelete, on
                     <div
                         className="absolute pointer-events-none z-0"
                         style={{
-                            top: 0, left: 0,
-                            width: CANVAS_W, height: CANVAS_H,
+                            top: 0,
+                            left: 0,
+                            width: CANVAS_W,
+                            height: CANVAS_H,
                             border: '1.5px dashed rgba(200,255,87,0.2)',
                             borderRadius: 4,
                         }}
                     >
-                        <span className="absolute text-[9px] font-semibold uppercase tracking-widest"
-                              style={{ bottom: -18, right: 0, color: 'rgba(200,255,87,0.3)' }}>
+                        <span
+                            className="absolute text-[9px] font-semibold uppercase tracking-widest"
+                            style={{
+                                bottom: -18,
+                                right: 0,
+                                color: 'rgba(200,255,87,0.3)',
+                            }}
+                        >
                             A4 boundary
                         </span>
                     </div>
@@ -343,7 +485,10 @@ export function BentoGrid({ widgets, layouts, selectedId, onSelect, onDelete, on
                 {/* Smooth drag overlay */}
                 <DragOverlay dropAnimation={null}>
                     {draggingWidget && draggingLayout ? (
-                        <DragGhost widget={draggingWidget} layout={draggingLayout} />
+                        <DragGhost
+                            widget={draggingWidget}
+                            layout={draggingLayout}
+                        />
                     ) : null}
                 </DragOverlay>
             </DndContext>

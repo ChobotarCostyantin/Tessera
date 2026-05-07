@@ -30,7 +30,10 @@ export interface AboutWidget extends BaseWidget {
 
 export interface SkillsWidget extends BaseWidget {
     type: 'skills';
-    skills: Array<{ label: string; color: 'green' | 'purple' | 'amber' | 'blue' }>;
+    skills: Array<{
+        label: string;
+        color: 'green' | 'purple' | 'amber' | 'blue';
+    }>;
 }
 
 export interface ExperienceWidget extends BaseWidget {

@@ -15,15 +15,23 @@ interface InspectorProps {
 
 function Label({ children }: { children: React.ReactNode }) {
     return (
-        <label className="block text-[10px] font-semibold uppercase tracking-[0.05em] mb-1.5"
-               style={{ color: 'var(--t-muted)' }}>
+        <label
+            className="block text-[10px] font-semibold uppercase tracking-[0.05em] mb-1.5"
+            style={{ color: 'var(--t-muted)' }}
+        >
             {children}
         </label>
     );
 }
 
-function Input({ value, onChange, placeholder }: {
-    value: string; onChange: (v: string) => void; placeholder?: string;
+function Input({
+    value,
+    onChange,
+    placeholder,
+}: {
+    value: string;
+    onChange: (v: string) => void;
+    placeholder?: string;
 }) {
     return (
         <input
@@ -41,8 +49,18 @@ function Input({ value, onChange, placeholder }: {
     );
 }
 
-function TextArea({ value, onChange, placeholder, minHeight = '64px', helperText }: {
-    value: string; onChange: (v: string) => void; placeholder?: string; minHeight?: string; helperText?: string;
+function TextArea({
+    value,
+    onChange,
+    placeholder,
+    minHeight = '64px',
+    helperText,
+}: {
+    value: string;
+    onChange: (v: string) => void;
+    placeholder?: string;
+    minHeight?: string;
+    helperText?: string;
 }) {
     return (
         <>
@@ -60,7 +78,10 @@ function TextArea({ value, onChange, placeholder, minHeight = '64px', helperText
                 onChange={(e) => onChange(e.target.value)}
             />
             {helperText && (
-                <p className="text-[10px] mt-1" style={{ color: 'var(--t-muted)' }}>
+                <p
+                    className="text-[10px] mt-1"
+                    style={{ color: 'var(--t-muted)' }}
+                >
                     {helperText}
                 </p>
             )}
@@ -68,7 +89,13 @@ function TextArea({ value, onChange, placeholder, minHeight = '64px', helperText
     );
 }
 
-function Group({ label, children }: { label: string; children: React.ReactNode }) {
+function Group({
+    label,
+    children,
+}: {
+    label: string;
+    children: React.ReactNode;
+}) {
     return (
         <div className="mb-3">
             <Label>{label}</Label>
@@ -80,19 +107,37 @@ function Group({ label, children }: { label: string; children: React.ReactNode }
 // ─── Main Inspector Component ───────────────────────────────────────────────
 
 export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
-
     // Render empty state if no widget is selected
     if (!widget) {
         return (
-            <aside className="w-54 shrink-0 p-4 overflow-y-auto"
-                   style={{ borderLeft: '0.5px solid var(--t-border)', background: 'var(--t-surface)' }}>
-                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] mb-3"
-                   style={{ color: 'var(--t-muted)' }}>Inspector</p>
-                <p className="text-[12px] text-center pt-8 leading-relaxed" style={{ color: 'var(--t-muted)' }}>
-                    Select a widget<br />to edit its content
+            <aside
+                className="w-54 shrink-0 p-4 overflow-y-auto"
+                style={{
+                    borderLeft: '0.5px solid var(--t-border)',
+                    background: 'var(--t-surface)',
+                }}
+            >
+                <p
+                    className="text-[10px] font-semibold uppercase tracking-[0.08em] mb-3"
+                    style={{ color: 'var(--t-muted)' }}
+                >
+                    Inspector
                 </p>
-                <p className="text-[11px] text-center mt-3" style={{ color: 'rgba(200,255,87,0.35)' }}>
-                    Resize by dragging<br />the bottom-right corner
+                <p
+                    className="text-[12px] text-center pt-8 leading-relaxed"
+                    style={{ color: 'var(--t-muted)' }}
+                >
+                    Select a widget
+                    <br />
+                    to edit its content
+                </p>
+                <p
+                    className="text-[11px] text-center mt-3"
+                    style={{ color: 'rgba(200,255,87,0.35)' }}
+                >
+                    Resize by dragging
+                    <br />
+                    the bottom-right corner
                 </p>
             </aside>
         );
@@ -108,10 +153,18 @@ export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
                 return (
                     <>
                         <Group label="Name">
-                            <Input value={widget.name} onChange={(v) => patch({ name: v } as any)} placeholder="Your name" />
+                            <Input
+                                value={widget.name}
+                                onChange={(v) => patch({ name: v } as any)}
+                                placeholder="Your name"
+                            />
                         </Group>
                         <Group label="Role">
-                            <Input value={widget.role} onChange={(v) => patch({ role: v } as any)} placeholder="Your role" />
+                            <Input
+                                value={widget.role}
+                                onChange={(v) => patch({ role: v } as any)}
+                                placeholder="Your role"
+                            />
                         </Group>
                         <Group label="Bio">
                             <TextArea
@@ -127,10 +180,18 @@ export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
                 return (
                     <>
                         <Group label="Number">
-                            <Input value={widget.number} onChange={(v) => patch({ number: v } as any)} placeholder="42" />
+                            <Input
+                                value={widget.number}
+                                onChange={(v) => patch({ number: v } as any)}
+                                placeholder="42"
+                            />
                         </Group>
                         <Group label="Label">
-                            <Input value={widget.label} onChange={(v) => patch({ label: v } as any)} placeholder="Description" />
+                            <Input
+                                value={widget.label}
+                                onChange={(v) => patch({ label: v } as any)}
+                                placeholder="Description"
+                            />
                         </Group>
                     </>
                 );
@@ -151,13 +212,23 @@ export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
                 return (
                     <>
                         <Group label="City">
-                            <Input value={widget.city} onChange={(v) => patch({ city: v } as any)} />
+                            <Input
+                                value={widget.city}
+                                onChange={(v) => patch({ city: v } as any)}
+                            />
                         </Group>
                         <Group label="Country">
-                            <Input value={widget.country} onChange={(v) => patch({ country: v } as any)} />
+                            <Input
+                                value={widget.country}
+                                onChange={(v) => patch({ country: v } as any)}
+                            />
                         </Group>
                         <Group label="Availability">
-                            <Input value={widget.available} onChange={(v) => patch({ available: v } as any)} placeholder="Open to remote" />
+                            <Input
+                                value={widget.available}
+                                onChange={(v) => patch({ available: v } as any)}
+                                placeholder="Open to remote"
+                            />
                         </Group>
                     </>
                 );
@@ -169,10 +240,16 @@ export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
                             value={widget.skills.map((s) => s.label).join('\n')}
                             onChange={(v) => {
                                 // Cycle through predefined tag colors for visual variety
-                                const colors: Array<'green' | 'purple' | 'amber' | 'blue'> = ['blue', 'purple', 'green', 'amber'];
-                                const skills = v.split('\n')
+                                const colors: Array<
+                                    'green' | 'purple' | 'amber' | 'blue'
+                                > = ['blue', 'purple', 'green', 'amber'];
+                                const skills = v
+                                    .split('\n')
                                     .filter(Boolean)
-                                    .map((label, i) => ({ label, color: colors[i % 4] }));
+                                    .map((label, i) => ({
+                                        label,
+                                        color: colors[i % 4],
+                                    }));
                                 patch({ skills } as any);
                             }}
                             minHeight="100px"
@@ -184,12 +261,24 @@ export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
                 return (
                     <Group label="Items (role | company | period)">
                         <TextArea
-                            value={widget.items.map((i) => `${i.role} | ${i.company} | ${i.period}`).join('\n')}
+                            value={widget.items
+                                .map(
+                                    (i) =>
+                                        `${i.role} | ${i.company} | ${i.period}`,
+                                )
+                                .join('\n')}
                             onChange={(v) => {
-                                const items = v.split('\n')
+                                const items = v
+                                    .split('\n')
                                     .filter(Boolean)
                                     .map((line) => {
-                                        const [role = '', company = '', period = ''] = line.split('|').map((s) => s.trim());
+                                        const [
+                                            role = '',
+                                            company = '',
+                                            period = '',
+                                        ] = line
+                                            .split('|')
+                                            .map((s) => s.trim());
                                         return { role, company, period };
                                     });
                                 patch({ items } as any);
@@ -204,12 +293,21 @@ export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
                 return (
                     <Group label="Links (label | url | icon)">
                         <TextArea
-                            value={widget.links.map((l) => `${l.label} | ${l.url} | ${l.icon}`).join('\n')}
+                            value={widget.links
+                                .map((l) => `${l.label} | ${l.url} | ${l.icon}`)
+                                .join('\n')}
                             onChange={(v) => {
-                                const links = v.split('\n')
+                                const links = v
+                                    .split('\n')
                                     .filter(Boolean)
                                     .map((line) => {
-                                        const [label = '', url = '#', icon = '🔗'] = line.split('|').map((s) => s.trim());
+                                        const [
+                                            label = '',
+                                            url = '#',
+                                            icon = '🔗',
+                                        ] = line
+                                            .split('|')
+                                            .map((s) => s.trim());
                                         return { label, url, icon };
                                     });
                                 patch({ links } as any);
@@ -226,15 +324,26 @@ export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
     };
 
     return (
-        <aside className="w-54 shrink-0 p-4 flex flex-col h-full overflow-y-auto"
-               style={{ borderLeft: '0.5px solid var(--t-border)', background: 'var(--t-surface)' }}>
-
+        <aside
+            className="w-54 shrink-0 p-4 flex flex-col h-full overflow-y-auto"
+            style={{
+                borderLeft: '0.5px solid var(--t-border)',
+                background: 'var(--t-surface)',
+            }}
+        >
             <div className="flex-1">
-                <p className="text-[10px] font-semibold uppercase tracking-[0.08em] mb-3"
-                   style={{ color: 'var(--t-muted)' }}>Inspector</p>
+                <p
+                    className="text-[10px] font-semibold uppercase tracking-[0.08em] mb-3"
+                    style={{ color: 'var(--t-muted)' }}
+                >
+                    Inspector
+                </p>
 
                 <Group label="Type">
-                    <span className="text-[13px] font-medium capitalize" style={{ color: 'var(--t-text)' }}>
+                    <span
+                        className="text-[13px] font-medium capitalize"
+                        style={{ color: 'var(--t-text)' }}
+                    >
                         {widget.type}
                     </span>
                 </Group>
@@ -243,7 +352,10 @@ export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
             </div>
 
             {/* Delete Action Section */}
-            <div className="mt-6 pt-4" style={{ borderTop: '0.5px solid var(--t-border)' }}>
+            <div
+                className="mt-6 pt-4"
+                style={{ borderTop: '0.5px solid var(--t-border)' }}
+            >
                 <button
                     className="w-full py-2 rounded-lg text-[12px] font-medium transition-colors hover:bg-[rgba(255,80,80,0.05)]"
                     style={{

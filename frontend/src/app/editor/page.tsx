@@ -24,7 +24,11 @@ function genId(): string {
 // Load persisted configuration from localStorage
 function loadConfig(): PageConfig {
     if (typeof window === 'undefined') {
-        return { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS, theme: 'dark' };
+        return {
+            widgets: DEFAULT_WIDGETS,
+            layouts: DEFAULT_LAYOUTS,
+            theme: 'dark',
+        };
     }
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
@@ -32,7 +36,11 @@ function loadConfig(): PageConfig {
     } catch {
         // Ignore parse errors and fallback to defaults
     }
-    return { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS, theme: 'dark' };
+    return {
+        widgets: DEFAULT_WIDGETS,
+        layouts: DEFAULT_LAYOUTS,
+        theme: 'dark',
+    };
 }
 
 // Apply CSS variables to the document root based on the selected theme
@@ -86,7 +94,10 @@ export default function EditorPage() {
     // Auto-save layout and widgets to localStorage on change
     useEffect(() => {
         if (typeof window === 'undefined') return;
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ widgets, layouts, theme }));
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify({ widgets, layouts, theme }),
+        );
     }, [widgets, layouts, theme]);
 
     // ─── Handlers ───────────────────────────────────────────────────────────
@@ -116,7 +127,7 @@ export default function EditorPage() {
         // Find the lowest point on the grid to place the new widget
         let maxY = 0;
         setLayouts((prev) => {
-            prev.forEach(l => {
+            prev.forEach((l) => {
                 const bottomEdge = l.y + l.h;
                 if (bottomEdge > maxY) maxY = bottomEdge;
             });
@@ -173,12 +184,21 @@ export default function EditorPage() {
             {/* Top Navigation Bar */}
             <header
                 className="flex items-center justify-between px-5 py-3.5 shrink-0"
-                style={{ borderBottom: '0.5px solid var(--t-border)', background: 'rgba(15,15,16,0.92)' }}
+                style={{
+                    borderBottom: '0.5px solid var(--t-border)',
+                    background: 'rgba(15,15,16,0.92)',
+                }}
             >
                 <div className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
-                    <div className="w-2 h-2 rounded-full" style={{ background: 'var(--t-accent)' }} />
+                    <div
+                        className="w-2 h-2 rounded-full"
+                        style={{ background: 'var(--t-accent)' }}
+                    />
                     Tessera
-                    <span className="text-[11px] font-normal ml-1" style={{ color: 'var(--t-muted)' }}>
+                    <span
+                        className="text-[11px] font-normal ml-1"
+                        style={{ color: 'var(--t-muted)' }}
+                    >
                         — editor
                     </span>
                 </div>
@@ -195,14 +215,24 @@ export default function EditorPage() {
                                 fontFamily: 'inherit',
                                 cursor: 'pointer',
                             }}
-                            onClick={label === 'Export JSON' ? handleExport : () => toast.show('Preview — coming soon')}
+                            onClick={
+                                label === 'Export JSON'
+                                    ? handleExport
+                                    : () => toast.show('Preview — coming soon')
+                            }
                             onMouseEnter={(e) => {
-                                (e.currentTarget as HTMLElement).style.background = 'var(--t-surface2)';
-                                (e.currentTarget as HTMLElement).style.color = 'var(--t-text)';
+                                (
+                                    e.currentTarget as HTMLElement
+                                ).style.background = 'var(--t-surface2)';
+                                (e.currentTarget as HTMLElement).style.color =
+                                    'var(--t-text)';
                             }}
                             onMouseLeave={(e) => {
-                                (e.currentTarget as HTMLElement).style.background = 'transparent';
-                                (e.currentTarget as HTMLElement).style.color = 'var(--t-muted)';
+                                (
+                                    e.currentTarget as HTMLElement
+                                ).style.background = 'transparent';
+                                (e.currentTarget as HTMLElement).style.color =
+                                    'var(--t-muted)';
                             }}
                         >
                             {label}
