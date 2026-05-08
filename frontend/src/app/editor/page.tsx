@@ -16,9 +16,9 @@ import { Inspector } from '@/app/editor/_components/Inspector';
 const STORAGE_KEY = 'tessera:page-config-v2';
 
 // Simple counter for generating unique widget IDs
-let _idCounter = 200;
 function genId(): string {
-    return `w${++_idCounter}`;
+    // Generates a universally unique identifier (e.g., '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed')
+    return crypto.randomUUID();
 }
 
 // Load persisted configuration from localStorage
