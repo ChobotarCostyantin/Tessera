@@ -1,7 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useCallback, useRef } from 'react';
-import { Widget, WidgetLayout, Theme, PageConfig } from '@/types/widget';
+import React, {useState, useEffect, useCallback, useRef} from 'react';
+import {Widget, WidgetLayout, Theme, PageConfig} from '@/types/widget';
 import {
     DEFAULT_WIDGETS,
     DEFAULT_LAYOUTS,
@@ -9,41 +9,28 @@ import {
     WIDGET_CATALOG,
     createDefaultWidget,
 } from '@/lib/widgetConfig';
-import { EditorSidebar } from '@/app/editor/_components/EditorSidebar';
-import { BentoGrid } from '@/app/editor/_components/BentoGrid';
-import { Inspector } from '@/app/editor/_components/Inspector';
+import {Inspector} from '@/app/editor/_components/Inspector';
+import {EditorLayout} from "@/app/editor/_components/EditorLayout";
+import {findFreePosition} from "@/utils/gridUtils";
 
 const STORAGE_KEY = 'tessera:page-config-v2';
 
-// Simple counter for generating unique widget IDs
 function genId(): string {
-    // Generates a universally unique identifier (e.g., '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed')
     return crypto.randomUUID();
 }
 
-// Load persisted configuration from localStorage
 function loadConfig(): PageConfig {
     if (typeof window === 'undefined') {
-        return {
-            widgets: DEFAULT_WIDGETS,
-            layouts: DEFAULT_LAYOUTS,
-            theme: 'dark',
-        };
+        return { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS, theme: 'dark' };
     }
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
         if (raw) return JSON.parse(raw) as PageConfig;
-    } catch {
-        // Ignore parse errors and fallback to defaults
-    }
-    return {
-        widgets: DEFAULT_WIDGETS,
-        layouts: DEFAULT_LAYOUTS,
-        theme: 'dark',
-    };
+    } catch {}
+
+    return { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS, theme: 'dark' };
 }
 
-// Apply CSS variables to the document root based on the selected theme
 function applyTheme(theme: Theme): void {
     if (typeof document === 'undefined') return;
     const vars = THEMES[theme];
@@ -52,7 +39,6 @@ function applyTheme(theme: Theme): void {
     });
 }
 
-// Custom hook for managing toast notifications
 function useToast() {
     const [message, setMessage] = useState('');
     const [visible, setVisible] = useState(false);
@@ -65,10 +51,8 @@ function useToast() {
         timer.current = setTimeout(() => setVisible(false), 2500);
     }, []);
 
-    return { message, visible, show };
+    return {message, visible, show};
 }
-
-// ─── Main Editor Component ──────────────────────────────────────────────────
 
 export default function EditorPage() {
     const [widgets, setWidgets] = useState<Widget[]>(DEFAULT_WIDGETS);
@@ -77,7 +61,6 @@ export default function EditorPage() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const toast = useToast();
 
-    // Load persisted config on initial mount
     useEffect(() => {
         const config = loadConfig();
         setWidgets(config.widgets);
@@ -86,21 +69,14 @@ export default function EditorPage() {
         applyTheme(config.theme);
     }, []);
 
-    // Reapply CSS variables when the theme changes
     useEffect(() => {
         applyTheme(theme);
     }, [theme]);
 
-    // Auto-save layout and widgets to localStorage on change
     useEffect(() => {
         if (typeof window === 'undefined') return;
-        localStorage.setItem(
-            STORAGE_KEY,
-            JSON.stringify({ widgets, layouts, theme }),
-        );
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({widgets, layouts, theme}));
     }, [widgets, layouts, theme]);
-
-    // ─── Handlers ───────────────────────────────────────────────────────────
 
     const handleThemeChange = useCallback((t: Theme) => setTheme(t), []);
 
@@ -111,7 +87,7 @@ export default function EditorPage() {
 
     const handleDelete = useCallback((id: string) => {
         setWidgets((prev) => prev.filter((w) => w.id !== id));
-        setLayouts((prev) => prev.filter((l) => l.id !== id)); // Adjusted for dnd-kit (uses 'id' instead of 'i')
+        setLayouts((prev) => prev.filter((l) => l.id !== id));
         setSelectedId((prev) => (prev === id ? null : prev));
     }, []);
 
@@ -123,24 +99,41 @@ export default function EditorPage() {
         const id = genId();
         const newWidget = createDefaultWidget(type, id);
         const catalog = WIDGET_CATALOG.find((c) => c.type === type);
+        const defaultW = catalog?.defaultW ?? 3;
+        const defaultH = catalog?.defaultH ?? 3;
 
-        // Find the lowest point on the grid to place the new widget
-        let maxY = 0;
-        setLayouts((prev) => {
-            prev.forEach((l) => {
-                const bottomEdge = l.y + l.h;
-                if (bottomEdge > maxY) maxY = bottomEdge;
+        let targetX = 0;
+        let targetY = 0;
+
+        // Check if there is a pending drop position calculated by EditorLayout (drag and drop)
+        const globalWindow = window as Window & { __pendingDropPosition?: { x: number; y: number } };
+
+        if (globalWindow.__pendingDropPosition) {
+            targetX = globalWindow.__pendingDropPosition.x;
+            targetY = globalWindow.__pendingDropPosition.y;
+            // Clear the property so standard clicks continue to fall to the bottom
+            delete globalWindow.__pendingDropPosition;
+            // page.tsx — handleAddWidget, в else-гілці (click без drag)
+        } else {
+            const catalog = WIDGET_CATALOG.find((c) => c.type === type);
+            const w = catalog?.defaultW ?? 3;
+            const h = catalog?.defaultH ?? 3;
+
+            // Замість пошуку тільки maxY — знайди першу вільну позицію
+            setLayouts((prev) => {
+                const free = findFreePosition(prev, w, h);  // <-- функція вже є в EditorLayout.tsx
+                targetX = free.x;
+                targetY = free.y;
+                return prev;
             });
-            return prev;
-        });
+        }
 
-        // Initialize layout without React-Grid-Layout legacy properties
         const newLayout: WidgetLayout = {
             id,
-            x: 0,
-            y: maxY, // Place below the lowest widget
-            w: catalog?.defaultW ?? 3,
-            h: catalog?.defaultH ?? 3,
+            x: targetX,
+            y: targetY,
+            w: defaultW,
+            h: defaultH,
         };
 
         setWidgets((prev) => [...prev, newWidget]);
@@ -150,12 +143,12 @@ export default function EditorPage() {
 
     const handleUpdate = useCallback((id: string, patch: Partial<Widget>) => {
         setWidgets((prev) =>
-            prev.map((w) => (w.id === id ? ({ ...w, ...patch } as Widget) : w)),
+            prev.map((w) => (w.id === id ? ({...w, ...patch} as Widget) : w)),
         );
     }, []);
 
     const handleExport = useCallback(() => {
-        const config: PageConfig = { widgets, layouts, theme };
+        const config: PageConfig = {widgets, layouts, theme};
         navigator.clipboard
             .writeText(JSON.stringify(config, null, 2))
             .then(() => toast.show('✓ JSON copied to clipboard'))
@@ -163,13 +156,10 @@ export default function EditorPage() {
     }, [widgets, layouts, theme, toast]);
 
     const handlePublish = useCallback(() => {
-        // TODO: Replace with backend integration (e.g., POST /api/pages/:id) when NestJS is ready
         toast.show('✓ Saved locally — connect NestJS to publish');
     }, [toast]);
 
     const selectedWidget = widgets.find((w) => w.id === selectedId) ?? null;
-
-    // ─── Render ─────────────────────────────────────────────────────────────
 
     return (
         <div
@@ -181,7 +171,6 @@ export default function EditorPage() {
                 fontFamily: "'DM Sans', sans-serif",
             }}
         >
-            {/* Top Navigation Bar */}
             <header
                 className="flex items-center justify-between px-5 py-3.5 shrink-0"
                 style={{
@@ -190,15 +179,9 @@ export default function EditorPage() {
                 }}
             >
                 <div className="flex items-center gap-2 text-[15px] font-semibold tracking-tight">
-                    <div
-                        className="w-2 h-2 rounded-full"
-                        style={{ background: 'var(--t-accent)' }}
-                    />
+                    <div className="w-2 h-2 rounded-full" style={{background: 'var(--t-accent)'}} />
                     Tessera
-                    <span
-                        className="text-[11px] font-normal ml-1"
-                        style={{ color: 'var(--t-muted)' }}
-                    >
+                    <span className="text-[11px] font-normal ml-1" style={{color: 'var(--t-muted)'}}>
                         — editor
                     </span>
                 </div>
@@ -221,18 +204,12 @@ export default function EditorPage() {
                                     : () => toast.show('Preview — coming soon')
                             }
                             onMouseEnter={(e) => {
-                                (
-                                    e.currentTarget as HTMLElement
-                                ).style.background = 'var(--t-surface2)';
-                                (e.currentTarget as HTMLElement).style.color =
-                                    'var(--t-text)';
+                                (e.currentTarget as HTMLElement).style.background = 'var(--t-surface2)';
+                                (e.currentTarget as HTMLElement).style.color = 'var(--t-text)';
                             }}
                             onMouseLeave={(e) => {
-                                (
-                                    e.currentTarget as HTMLElement
-                                ).style.background = 'transparent';
-                                (e.currentTarget as HTMLElement).style.color =
-                                    'var(--t-muted)';
+                                (e.currentTarget as HTMLElement).style.background = 'transparent';
+                                (e.currentTarget as HTMLElement).style.color = 'var(--t-muted)';
                             }}
                         >
                             {label}
@@ -254,21 +231,16 @@ export default function EditorPage() {
                 </div>
             </header>
 
-            {/* Main Editor Body */}
-            <div className="flex flex-1 overflow-hidden">
-                <EditorSidebar
-                    theme={theme}
-                    onThemeChange={handleThemeChange}
-                    onAddWidget={handleAddWidget}
-                />
-
-                <BentoGrid
-                    widgets={widgets}
-                    layouts={layouts}
-                    selectedId={selectedId}
-                    onSelect={handleSelect}
-                    onDelete={handleDelete}
-                    onLayoutChange={handleLayoutChange}
+            <div className="flex flex-1 overflow-hidden justify-between">
+                <EditorLayout widgets={widgets}
+                              layouts={layouts}
+                              selectedId={selectedId}
+                              theme={theme}
+                              onSelect={handleSelect}
+                              onDelete={handleDelete}
+                              onLayoutChange={handleLayoutChange}
+                              onAddWidget={handleAddWidget}
+                              onThemeChange={handleThemeChange}
                 />
 
                 <Inspector
@@ -278,7 +250,6 @@ export default function EditorPage() {
                 />
             </div>
 
-            {/* Global Toast Notification */}
             <div
                 className="fixed bottom-5 left-1/2 px-4 py-2.5 rounded-[10px] text-[12px] pointer-events-none z-50 transition-all duration-300"
                 style={{
