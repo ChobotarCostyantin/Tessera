@@ -19,6 +19,10 @@ interface BentoGridProps {
     initialLayoutsRef: React.MutableRefObject<WidgetLayout[]>;
     liveLayouts: WidgetLayout[];
     setLiveLayouts: (layouts: WidgetLayout[]) => void;
+    /** Id of the synthetic ghost layout injected during a sidebar drag */
+    sidebarGhostId: string;
+    /** Synthetic Widget fed to DragGhost while dragging from sidebar (null when idle) */
+    sidebarGhostWidget: Widget | null;
 }
 
 // Main layout component orchestrating the drag-and-drop grid area
@@ -33,12 +37,14 @@ export function BentoGrid({
                               initialLayoutsRef,
                               liveLayouts,
                               setLiveLayouts,
+                              sidebarGhostId,
+                              sidebarGhostWidget,
                           }: BentoGridProps) {
 
-    // Sync external layout changes when a widget is not actively being dragged
+    // Sync external layout changes when no drag is active
     useEffect(() => {
-        if (!draggingId) setLiveLayouts(layouts);
-    }, [layouts, draggingId, setLiveLayouts]);
+        if (!draggingId && !sidebarGhostWidget) setLiveLayouts(layouts);
+    }, [layouts, draggingId, sidebarGhostWidget, setLiveLayouts]);
 
     // Handles resizing of a single widget and triggers collision resolution
     const handleResize = useCallback(
@@ -49,8 +55,14 @@ export function BentoGrid({
         [layouts, onLayoutChange],
     );
 
+    // Grid-drag ghost (existing widget being moved)
     const activeLiveLayout = draggingId ? liveLayouts.find((l) => l.id === draggingId) : null;
     const draggingWidget = draggingId ? widgets.find((w) => w.id === draggingId) : null;
+
+    // Sidebar-drag ghost (new widget being dragged in from sidebar)
+    const sidebarGhostLayout = sidebarGhostWidget
+        ? liveLayouts.find((l) => l.id === sidebarGhostId)
+        : null;
 
     return (
         <main
@@ -96,7 +108,7 @@ export function BentoGrid({
                     </span>
                 </div>
 
-                {/* Semi-transparent ghost showing where the dragged item will land */}
+                {/* Ghost for existing widget being moved inside the grid */}
                 {activeLiveLayout && draggingWidget && (
                     <div
                         className="absolute top-0 left-0 pointer-events-none z-0 transition-transform duration-150 ease-out"
@@ -110,7 +122,21 @@ export function BentoGrid({
                     </div>
                 )}
 
-                {/* Render all widgets mapped to their live or finalized layouts */}
+                {/* Ghost for new widget being dragged in from the sidebar */}
+                {sidebarGhostLayout && sidebarGhostWidget && (
+                    <div
+                        className="absolute top-0 left-0 pointer-events-none z-10 transition-transform duration-100 ease-out"
+                        style={{
+                            transform: `translate3d(${sidebarGhostLayout.x * (CELL_PX + GAP_PX)}px, ${sidebarGhostLayout.y * (CELL_PX + GAP_PX)}px, 0)`,
+                            width: gridToPx(sidebarGhostLayout.w),
+                            height: gridToPx(sidebarGhostLayout.h),
+                        }}
+                    >
+                        <DragGhost widget={sidebarGhostWidget} />
+                    </div>
+                )}
+
+                {/* Render all real widgets mapped to their live or finalized layouts */}
                 {widgets.map((widget) => {
                     const isDragging = draggingId === widget.id;
                     const layoutToUse = isDragging

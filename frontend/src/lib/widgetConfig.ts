@@ -97,7 +97,7 @@ export const DEFAULT_LAYOUTS: WidgetLayout[] = [
     { id: 'w2', x: 3, y: 0, w: 6, h: 3 },
     { id: 'w3', x: 9, y: 0, w: 3, h: 7 },
     { id: 'w4', x: 0, y: 4, w: 3, h: 3 },
-    { id: 'w5', x: 3, y: 3, w: 3, h: 3 },
+    { id: 'w5', x: 3, y: 3, w: 3, h: 4 },
     { id: 'w6', x: 6, y: 3, w: 3, h: 4 },
     { id: 'w7', x: 0, y: 7, w: 6, h: 3 },
     { id: 'w8', x: 6, y: 7, w: 3, h: 3 },

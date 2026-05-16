@@ -3,8 +3,6 @@
 import React, {useState, useEffect, useCallback, useRef} from 'react';
 import {Widget, WidgetLayout, Theme, PageConfig} from '@/types/widget';
 import {
-    DEFAULT_WIDGETS,
-    DEFAULT_LAYOUTS,
     THEMES,
     WIDGET_CATALOG,
     createDefaultWidget,
@@ -20,15 +18,22 @@ function genId(): string {
 }
 
 function loadConfig(): PageConfig {
+    // Return empty arrays for SSR to avoid hydration mismatch
     if (typeof window === 'undefined') {
-        return { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS, theme: 'dark' };
+        return { widgets: [], layouts: [], theme: 'dark' };
     }
     try {
         const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) return JSON.parse(raw) as PageConfig;
+        if (raw) {
+            const parsed = JSON.parse(raw) as PageConfig;
+            if (Array.isArray(parsed.widgets) && Array.isArray(parsed.layouts)) {
+                return parsed;
+            }
+        }
     } catch {}
 
-    return { widgets: DEFAULT_WIDGETS, layouts: DEFAULT_LAYOUTS, theme: 'dark' };
+    // Fallback to empty state instead of default mock widgets
+    return { widgets: [], layouts: [], theme: 'dark' };
 }
 
 function applyTheme(theme: Theme): void {
@@ -55,21 +60,15 @@ function useToast() {
 }
 
 export default function EditorPage() {
-    const [widgets, setWidgets] = useState<Widget[]>(DEFAULT_WIDGETS);
-    const [layouts, setLayouts] = useState<WidgetLayout[]>(DEFAULT_LAYOUTS);
-    const [theme, setTheme] = useState<Theme>('dark');
+    const [isMounted, setIsMounted] = useState(false);
+    const [widgets, setWidgets] = useState<Widget[]>(() => loadConfig().widgets);
+    const [layouts, setLayouts] = useState<WidgetLayout[]>(() => loadConfig().layouts);
+    const [theme, setTheme] = useState<Theme>(() => loadConfig().theme);
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const toast = useToast();
 
     useEffect(() => {
-        const config = loadConfig();
-        setWidgets(config.widgets);
-        setLayouts(config.layouts);
-        setTheme(config.theme);
-        applyTheme(config.theme);
-    }, []);
-
-    useEffect(() => {
+        setIsMounted(true);
         applyTheme(theme);
     }, [theme]);
 
@@ -105,23 +104,16 @@ export default function EditorPage() {
         let targetX = 0;
         let targetY = 0;
 
-        // Check if there is a pending drop position calculated by EditorLayout (drag and drop)
         const globalWindow = window as Window & { __pendingDropPosition?: { x: number; y: number } };
 
         if (globalWindow.__pendingDropPosition) {
             targetX = globalWindow.__pendingDropPosition.x;
             targetY = globalWindow.__pendingDropPosition.y;
-            // Clear the property so standard clicks continue to fall to the bottom
             delete globalWindow.__pendingDropPosition;
-            // page.tsx — handleAddWidget, в else-гілці (click без drag)
         } else {
-            const catalog = WIDGET_CATALOG.find((c) => c.type === type);
-            const w = catalog?.defaultW ?? 3;
-            const h = catalog?.defaultH ?? 3;
-
-            // Замість пошуку тільки maxY — знайди першу вільну позицію
             setLayouts((prev) => {
-                const free = findFreePosition(prev, w, h);  // <-- функція вже є в EditorLayout.tsx
+                // Find first free position starting from top-left
+                const free = findFreePosition(prev, defaultW, defaultH);
                 targetX = free.x;
                 targetY = free.y;
                 return prev;
@@ -160,6 +152,17 @@ export default function EditorPage() {
     }, [toast]);
 
     const selectedWidget = widgets.find((w) => w.id === selectedId) ?? null;
+
+    if (!isMounted) {
+        return (
+            <div
+                style={{
+                    height: '100dvh',
+                    background: 'var(--t-bg)',
+                }}
+            />
+        );
+    }
 
     return (
         <div
