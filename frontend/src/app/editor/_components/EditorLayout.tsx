@@ -63,6 +63,17 @@ export function EditorLayout({
             const canvasEl = document.querySelector('[data-canvas="true"]') as HTMLElement | null;
             if (!canvasEl) return null;
             const rect = canvasEl.getBoundingClientRect();
+
+            // Перевіряємо, чи курсор дійсно знаходиться над полотном гріда
+            const isOverCanvas =
+                clientX >= rect.left &&
+                clientX <= rect.right &&
+                clientY >= rect.top &&
+                clientY <= rect.bottom;
+
+            // Якщо курсор поза грідом (наприклад, у сайдбарі), повертаємо null
+            if (!isOverCanvas) return null;
+
             const cellStep = CELL_PX + GAP_PX;
             let col = Math.round((clientX - rect.left) / cellStep - w / 2);
             let row = Math.round((clientY - rect.top) / cellStep - h / 2);
@@ -109,9 +120,8 @@ export function EditorLayout({
                     activatorCoordsRef.current = null;
                 }
 
-                const initialPos = hasCoords
-                    ? pointerToGrid(initialX, initialY, defaultW, defaultH)
-                    : findFreePosition(layouts, defaultW, defaultH);
+                const gridPos = hasCoords ? pointerToGrid(initialX, initialY, defaultW, defaultH) : null;
+                const initialPos = gridPos || findFreePosition(layouts, defaultW, defaultH);
 
                 const ghostLayout: WidgetLayout = {
                     id: SIDEBAR_GHOST_ID,
