@@ -10,6 +10,7 @@ import {
 import {Inspector} from '@/app/editor/_components/Inspector';
 import {EditorLayout} from "@/app/editor/_components/EditorLayout";
 import {findFreePosition} from "@/utils/gridUtils";
+import {resolveCollisions} from "@/utils/collisionUtils";
 
 const STORAGE_KEY = 'tessera:page-config-v2';
 
@@ -101,35 +102,25 @@ export default function EditorPage() {
         const defaultW = catalog?.defaultW ?? 3;
         const defaultH = catalog?.defaultH ?? 3;
 
-        let targetX = 0;
-        let targetY = 0;
-
         const globalWindow = window as Window & { __pendingDropPosition?: { x: number; y: number } };
-
-        if (globalWindow.__pendingDropPosition) {
-            targetX = globalWindow.__pendingDropPosition.x;
-            targetY = globalWindow.__pendingDropPosition.y;
-            delete globalWindow.__pendingDropPosition;
-        } else {
-            setLayouts((prev) => {
-                // Find first free position starting from top-left
-                const free = findFreePosition(prev, defaultW, defaultH);
-                targetX = free.x;
-                targetY = free.y;
-                return prev;
-            });
-        }
+        const pos = globalWindow.__pendingDropPosition;
+        if (pos) delete globalWindow.__pendingDropPosition;
 
         const newLayout: WidgetLayout = {
             id,
-            x: targetX,
-            y: targetY,
+            x: pos?.x ?? 0,
+            y: pos?.y ?? 0,
             w: defaultW,
             h: defaultH,
         };
 
         setWidgets((prev) => [...prev, newWidget]);
-        setLayouts((prev) => [...prev, newLayout]);
+        setLayouts((prev) => {
+            const withNew = pos
+                ? [...prev, newLayout]
+                : [...prev, { ...newLayout, ...findFreePosition(prev, defaultW, defaultH) }];
+            return resolveCollisions(withNew, id); // ← ключове: resolve після додавання
+        });
         setSelectedId(id);
     }, []);
 

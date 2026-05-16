@@ -63,17 +63,6 @@ export function EditorLayout({
             const canvasEl = document.querySelector('[data-canvas="true"]') as HTMLElement | null;
             if (!canvasEl) return null;
             const rect = canvasEl.getBoundingClientRect();
-
-            // Перевіряємо, чи курсор дійсно знаходиться над полотном гріда
-            const isOverCanvas =
-                clientX >= rect.left &&
-                clientX <= rect.right &&
-                clientY >= rect.top &&
-                clientY <= rect.bottom;
-
-            // Якщо курсор поза грідом (наприклад, у сайдбарі), повертаємо null
-            if (!isOverCanvas) return null;
-
             const cellStep = CELL_PX + GAP_PX;
             let col = Math.round((clientX - rect.left) / cellStep - w / 2);
             let row = Math.round((clientY - rect.top) / cellStep - h / 2);
@@ -120,8 +109,9 @@ export function EditorLayout({
                     activatorCoordsRef.current = null;
                 }
 
-                const gridPos = hasCoords ? pointerToGrid(initialX, initialY, defaultW, defaultH) : null;
-                const initialPos = gridPos || findFreePosition(layouts, defaultW, defaultH);
+                const initialPos = hasCoords
+                    ? pointerToGrid(initialX, initialY, defaultW, defaultH)
+                    : findFreePosition(layouts, defaultW, defaultH);
 
                 const ghostLayout: WidgetLayout = {
                     id: SIDEBAR_GHOST_ID,
@@ -183,6 +173,21 @@ export function EditorLayout({
             const data = event.active.data.current as Record<string, unknown> | undefined;
 
             if (data?.fromSidebar) {
+                const canvasEl = document.querySelector('[data-canvas="true"]') as HTMLElement | null;
+                const origin = activatorCoordsRef.current;
+                const rect = canvasEl?.getBoundingClientRect();
+                const finalX = (origin?.x ?? 0) + event.delta.x;
+                const finalY = (origin?.y ?? 0) + event.delta.y;
+
+                console.log('DragEnd debug:', {
+                    origin,
+                    delta: event.delta,
+                    finalX,
+                    finalY,
+                    rect: rect ? { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom } : null,
+                    isOverCanvas: rect ? (finalX >= rect.left && finalX <= rect.right && finalY >= rect.top && finalY <= rect.bottom) : false,
+                });
+
                 const ghost = sidebarGhostLayoutRef.current;
 
                 if (ghost) {
