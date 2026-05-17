@@ -1,10 +1,10 @@
 export interface WidgetAppearance {
     bgColor?: string;
-    borderRadius?: number; // px, 0–28
+    borderRadius?: number;
     hoverAnimation?: 'none' | 'lift' | 'glow' | 'scale';
     textColor?: string;
     fontFamily?: string;
-    fontSize?: number; // px base
+    fontSize?: number;
 }
 
 export interface WidgetLayout {
@@ -32,9 +32,9 @@ export interface BaseWidget {
 
 export interface AboutWidget extends BaseWidget {
     type: 'about';
-    name: string;        // HTML string
-    role: string;        // HTML string
-    bio?: string;        // HTML string
+    name: string;
+    role: string;
+    bio?: string;
     avatarEmoji?: string;
 }
 
@@ -58,13 +58,13 @@ export interface LinksWidget extends BaseWidget {
 
 export interface StatWidget extends BaseWidget {
     type: 'stat';
-    number: string;  // HTML string
-    label: string;   // HTML string
+    number: string;
+    label: string;
 }
 
 export interface QuoteWidget extends BaseWidget {
     type: 'quote';
-    text: string;    // HTML string
+    text: string;
 }
 
 export interface LocationWidget extends BaseWidget {
@@ -83,10 +83,7 @@ export type Widget =
     | QuoteWidget
     | LocationWidget;
 
-export type Theme = 'dark' | 'light' | 'warm';
-
 export interface PageConfig {
     widgets: Widget[];
     layouts: WidgetLayout[];
-    theme: Theme;
 }

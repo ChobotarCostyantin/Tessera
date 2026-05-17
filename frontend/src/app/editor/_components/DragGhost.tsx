@@ -4,7 +4,8 @@ import { WidgetRenderer } from './WidgetRenderer';
 import { WIDGET_CATALOG } from '@/lib/widgetConfig';
 
 export function DragGhost({ widget }: { widget: Widget }) {
-    const isSidebarGhost = !('content' in widget) && !('items' in widget) && !('links' in widget);
+    const isSidebarGhost =
+        !('content' in widget) && !('items' in widget) && !('links' in widget);
 
     const catalogItem = isSidebarGhost
         ? WIDGET_CATALOG.find((c) => c.type === widget.type)
@@ -13,7 +14,10 @@ export function DragGhost({ widget }: { widget: Widget }) {
     return (
         <div
             className="w-full h-full rounded-[14px] p-4 pointer-events-none overflow-hidden"
-            style={{ background: 'rgba(200,255,87,0.06)', border: '2px dashed var(--t-accent)' }}
+            style={{
+                background: 'rgba(200,255,87,0.06)',
+                border: '2px dashed var(--t-accent)',
+            }}
         >
             {isSidebarGhost ? (
                 // Sidebar ghost fallback — no WidgetRenderer, just icon + label
@@ -29,7 +33,9 @@ export function DragGhost({ widget }: { widget: Widget }) {
                             >
                                 {catalogItem.icon}
                             </div>
-                            <span className="text-[12px] font-medium">{catalogItem.label}</span>
+                            <span className="text-[12px] font-medium">
+                                {catalogItem.label}
+                            </span>
                         </>
                     )}
                 </div>

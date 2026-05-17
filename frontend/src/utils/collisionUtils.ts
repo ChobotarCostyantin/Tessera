@@ -5,15 +5,15 @@ import { GRID_COLS } from '@/lib/widgetConfig';
 export function checkOverlap(a: WidgetLayout, b: WidgetLayout): boolean {
     if (a.id === b.id) return false;
     return (
-        a.x < b.x + b.w &&
-        a.x + a.w > b.x &&
-        a.y < b.y + b.h &&
-        a.y + a.h > b.y
+        a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y
     );
 }
 
 // Resolves collisions by flowing widgets left-to-right, then wrapping to the next row
-export function resolveCollisions(layouts: WidgetLayout[], activeId: string): WidgetLayout[] {
+export function resolveCollisions(
+    layouts: WidgetLayout[],
+    activeId: string,
+): WidgetLayout[] {
     const activeItem = layouts.find((l) => l.id === activeId);
     if (!activeItem) return layouts;
 

@@ -11,7 +11,15 @@ const TAG_COLORS: Record<string, string> = {
 };
 
 // Helper: renders a field as rich HTML if it looks like HTML, otherwise plain text
-function RichField({ html, className, style }: { html: string; className?: string; style?: React.CSSProperties }) {
+function RichField({
+    html,
+    className,
+    style,
+}: {
+    html: string;
+    className?: string;
+    style?: React.CSSProperties;
+}) {
     const isHtml = html?.trim().startsWith('<');
     if (isHtml) {
         return (
@@ -22,7 +30,11 @@ function RichField({ html, className, style }: { html: string; className?: strin
             />
         );
     }
-    return <div className={className} style={style}>{html}</div>;
+    return (
+        <div className={className} style={style}>
+            {html}
+        </div>
+    );
 }
 
 export function WidgetRenderer({ widget }: { widget: Widget }) {
@@ -32,7 +44,10 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
                 <div className="flex flex-col h-full justify-center gap-2 overflow-hidden">
                     <div
                         className="w-14 h-14 rounded-full flex items-center justify-center text-2xl shrink-0"
-                        style={{ background: 'linear-gradient(135deg, var(--t-accent2), #a855f7)' }}
+                        style={{
+                            background:
+                                'linear-gradient(135deg, var(--t-accent2), #a855f7)',
+                        }}
                     >
                         {widget.avatarEmoji ?? '👤'}
                     </div>
@@ -61,12 +76,18 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
         case 'skills':
             return (
                 <div className="h-full flex flex-col overflow-hidden">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest mb-2 shrink-0" style={{ color: 'var(--t-muted)' }}>
+                    <p
+                        className="text-[10px] font-semibold uppercase tracking-widest mb-2 shrink-0"
+                        style={{ color: 'var(--t-muted)' }}
+                    >
                         Skills
                     </p>
                     <div className="flex flex-wrap gap-1.5 overflow-hidden content-start">
                         {widget.skills.map((s, i) => (
-                            <span key={i} className={`px-2.5 py-1 rounded-full text-[11px] font-medium border ${TAG_COLORS[s.color]}`}>
+                            <span
+                                key={i}
+                                className={`px-2.5 py-1 rounded-full text-[11px] font-medium border ${TAG_COLORS[s.color]}`}
+                            >
                                 {s.label}
                             </span>
                         ))}
@@ -77,15 +98,36 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
         case 'experience':
             return (
                 <div className="h-full flex flex-col overflow-hidden">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest mb-2 shrink-0" style={{ color: 'var(--t-muted)' }}>
+                    <p
+                        className="text-[10px] font-semibold uppercase tracking-widest mb-2 shrink-0"
+                        style={{ color: 'var(--t-muted)' }}
+                    >
                         Experience
                     </p>
                     <div className="flex flex-col gap-3 overflow-hidden">
                         {widget.items.map((item, i) => (
                             <div key={i} className="shrink-0">
-                                <div className="text-[13px] font-semibold" style={{ color: 'var(--t-text)' }}>{item.role}</div>
-                                <div className="text-[11px] mt-0.5" style={{ color: 'var(--t-muted)' }}>{item.company}</div>
-                                <div className="text-[10px] mt-0.5" style={{ color: 'var(--t-accent)', opacity: 0.8 }}>{item.period}</div>
+                                <div
+                                    className="text-[13px] font-semibold"
+                                    style={{ color: 'var(--t-text)' }}
+                                >
+                                    {item.role}
+                                </div>
+                                <div
+                                    className="text-[11px] mt-0.5"
+                                    style={{ color: 'var(--t-muted)' }}
+                                >
+                                    {item.company}
+                                </div>
+                                <div
+                                    className="text-[10px] mt-0.5"
+                                    style={{
+                                        color: 'var(--t-accent)',
+                                        opacity: 0.8,
+                                    }}
+                                >
+                                    {item.period}
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -95,15 +137,25 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
         case 'links':
             return (
                 <div className="h-full flex flex-col overflow-hidden">
-                    <p className="text-[10px] font-semibold uppercase tracking-widest mb-2 shrink-0" style={{ color: 'var(--t-muted)' }}>
+                    <p
+                        className="text-[10px] font-semibold uppercase tracking-widest mb-2 shrink-0"
+                        style={{ color: 'var(--t-muted)' }}
+                    >
                         Links
                     </p>
                     <div className="flex flex-col gap-1.5 overflow-hidden">
                         {widget.links.map((link, i) => (
                             <a
-                                key={i} href={link.url} target="_blank" rel="noopener noreferrer"
+                                key={i}
+                                href={link.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-[12px] font-medium transition-colors shrink-0"
-                                style={{ background: 'var(--t-surface2)', color: 'var(--t-text)', border: '0.5px solid var(--t-border)' }}
+                                style={{
+                                    background: 'var(--t-surface2)',
+                                    color: 'var(--t-text)',
+                                    border: '0.5px solid var(--t-border)',
+                                }}
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 <span className="text-sm">{link.icon}</span>
@@ -120,7 +172,10 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
                     <RichField
                         html={widget.number}
                         className="font-semibold leading-none tracking-tighter"
-                        style={{ fontSize: 'clamp(2rem, 3.5vw, 3.5rem)', color: 'var(--t-accent)' }}
+                        style={{
+                            fontSize: 'clamp(2rem, 3.5vw, 3.5rem)',
+                            color: 'var(--t-accent)',
+                        }}
                     />
                     <RichField
                         html={widget.label}
@@ -133,7 +188,12 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
         case 'quote':
             return (
                 <div className="h-full flex flex-col justify-center overflow-hidden">
-                    <div className="text-4xl leading-none mb-2" style={{ color: 'var(--t-accent2)', opacity: 0.45 }}>&ldquo;</div>
+                    <div
+                        className="text-4xl leading-none mb-2"
+                        style={{ color: 'var(--t-accent2)', opacity: 0.45 }}
+                    >
+                        &ldquo;
+                    </div>
                     <RichField
                         html={widget.text}
                         className="text-[13px] leading-relaxed italic"
@@ -146,13 +206,22 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
             return (
                 <div
                     className="h-full flex flex-col justify-end overflow-hidden"
-                    style={{ background: 'linear-gradient(135deg, rgba(124,109,255,0.15), rgba(37,99,235,0.1))' }}
+                    style={{
+                        background:
+                            'linear-gradient(135deg, rgba(124,109,255,0.15), rgba(37,99,235,0.1))',
+                    }}
                 >
                     <div className="text-2xl mb-1.5">📍</div>
-                    <div className="text-sm font-semibold truncate" style={{ color: 'var(--t-text)' }}>
+                    <div
+                        className="text-sm font-semibold truncate"
+                        style={{ color: 'var(--t-text)' }}
+                    >
                         {widget.city}, {widget.country}
                     </div>
-                    <div className="text-[11px] mt-0.5 truncate" style={{ color: 'var(--t-muted)' }}>
+                    <div
+                        className="text-[11px] mt-0.5 truncate"
+                        style={{ color: 'var(--t-muted)' }}
+                    >
                         {widget.available}
                     </div>
                 </div>

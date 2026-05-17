@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useCallback, useRef, useState} from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import {
     DndContext,
     DragEndEvent,
@@ -12,40 +12,38 @@ import {
     useSensor,
     useSensors,
 } from '@dnd-kit/core';
-import {Theme, Widget, WidgetLayout} from '@/types/widget';
+import { Widget, WidgetLayout } from '@/types/widget';
 import {CELL_PX, GAP_PX, GRID_COLS, WIDGET_CATALOG} from '@/lib/widgetConfig';
-import {BentoGrid} from './BentoGrid';
-import {EditorSidebar} from './EditorSidebar';
-import {findFreePosition} from '@/utils/gridUtils';
-import {resolveCollisions} from '@/utils/collisionUtils';
+import { BentoGrid } from './BentoGrid';
+import { EditorSidebar } from './EditorSidebar';
+import { findFreePosition } from '@/utils/gridUtils';
+import { resolveCollisions } from '@/utils/collisionUtils';
 
 interface EditorLayoutProps {
     widgets: Widget[];
     layouts: WidgetLayout[];
     selectedId: string | null;
-    theme: Theme;
     onSelect: (id: string) => void;
     onDelete: (id: string) => void;
     onLayoutChange: (layouts: WidgetLayout[]) => void;
     onAddWidget: (type: Widget['type']) => void;
-    onThemeChange: (t: Theme) => void;
 }
 
 const SIDEBAR_GHOST_ID = '__sidebar_ghost__';
 
 export function EditorLayout({
-                                 widgets,
-                                 layouts,
-                                 selectedId,
-                                 theme,
-                                 onSelect,
-                                 onDelete,
-                                 onLayoutChange,
-                                 onAddWidget,
-                                 onThemeChange,
-                             }: EditorLayoutProps) {
+    widgets,
+    layouts,
+    selectedId,
+    onSelect,
+    onDelete,
+    onLayoutChange,
+    onAddWidget,
+}: EditorLayoutProps) {
     const [draggingId, setDraggingId] = useState<string | null>(null);
-    const [draggingSidebarType, setDraggingSidebarType] = useState<Widget['type'] | null>(null);
+    const [draggingSidebarType, setDraggingSidebarType] = useState<
+        Widget['type'] | null
+    >(null);
     const [liveLayouts, setLiveLayouts] = useState<WidgetLayout[]>(layouts);
 
     const initialLayoutsRef = useRef<WidgetLayout[]>([]);
@@ -54,13 +52,17 @@ export function EditorLayout({
     const activatorCoordsRef = useRef<{ x: number; y: number } | null>(null);
 
     const sensors = useSensors(
-        useSensor(MouseSensor, {activationConstraint: {distance: 5}}),
-        useSensor(TouchSensor, {activationConstraint: {delay: 150, tolerance: 5}}),
+        useSensor(MouseSensor, { activationConstraint: { distance: 5 } }),
+        useSensor(TouchSensor, {
+            activationConstraint: { delay: 150, tolerance: 5 },
+        }),
     );
 
     const pointerToGrid = useCallback(
         (clientX: number, clientY: number, w: number, h: number) => {
-            const canvasEl = document.querySelector('[data-canvas="true"]') as HTMLElement | null;
+            const canvasEl = document.querySelector(
+                '[data-canvas="true"]',
+            ) as HTMLElement | null;
             if (!canvasEl) return null;
             const rect = canvasEl.getBoundingClientRect();
             const cellStep = CELL_PX + GAP_PX;
@@ -68,20 +70,24 @@ export function EditorLayout({
             let row = Math.round((clientY - rect.top) / cellStep - h / 2);
             col = Math.max(0, Math.min(GRID_COLS - w, col));
             row = Math.max(0, row);
-            return {x: col, y: row};
+            return { x: col, y: row };
         },
         [],
     );
 
     const handleDragStart = useCallback(
         (event: DragStartEvent) => {
-            const data = event.active.data.current as Record<string, unknown> | undefined;
+            const data = event.active.data.current as
+                | Record<string, unknown>
+                | undefined;
 
             if (data?.fromSidebar) {
                 const widgetType = data.widgetType as Widget['type'];
                 setDraggingSidebarType(widgetType);
 
-                const catalogItem = WIDGET_CATALOG.find((c) => c.type === widgetType);
+                const catalogItem = WIDGET_CATALOG.find(
+                    (c) => c.type === widgetType,
+                );
                 const defaultW = catalogItem?.defaultW ?? 3;
                 const defaultH = catalogItem?.defaultH ?? 3;
 
@@ -91,7 +97,10 @@ export function EditorLayout({
                 const actEvent = event.activatorEvent;
 
                 // Перевірка для TouchSensor (мобільні пристрої)
-                if ('touches' in actEvent && (actEvent as TouchEvent).touches.length > 0) {
+                if (
+                    'touches' in actEvent &&
+                    (actEvent as TouchEvent).touches.length > 0
+                ) {
                     initialX = (actEvent as TouchEvent).touches[0].clientX;
                     initialY = (actEvent as TouchEvent).touches[0].clientY;
                     hasCoords = true;
@@ -104,7 +113,7 @@ export function EditorLayout({
                 }
 
                 if (hasCoords) {
-                    activatorCoordsRef.current = {x: initialX, y: initialY};
+                    activatorCoordsRef.current = { x: initialX, y: initialY };
                 } else {
                     activatorCoordsRef.current = null;
                 }
@@ -121,7 +130,12 @@ export function EditorLayout({
                     h: defaultH,
                 };
                 sidebarGhostLayoutRef.current = ghostLayout;
-                setLiveLayouts(resolveCollisions([...layouts, ghostLayout], SIDEBAR_GHOST_ID));
+                setLiveLayouts(
+                    resolveCollisions(
+                        [...layouts, ghostLayout],
+                        SIDEBAR_GHOST_ID,
+                    ),
+                );
             } else if (data?.fromGrid) {
                 setDraggingId(event.active.id as string);
                 initialLayoutsRef.current = layouts;
@@ -132,7 +146,9 @@ export function EditorLayout({
 
     const handleDragMove = useCallback(
         (event: DragMoveEvent) => {
-            const data = event.active.data.current as Record<string, unknown> | undefined;
+            const data = event.active.data.current as
+                | Record<string, unknown>
+                | undefined;
 
             if (data?.fromSidebar) {
                 const ghost = sidebarGhostLayoutRef.current;
@@ -146,21 +162,33 @@ export function EditorLayout({
                 const pos = pointerToGrid(currentX, currentY, ghost.w, ghost.h);
                 if (!pos) return;
 
-                const updatedGhost: WidgetLayout = {...ghost, x: pos.x, y: pos.y};
+                const updatedGhost: WidgetLayout = {
+                    ...ghost,
+                    x: pos.x,
+                    y: pos.y,
+                };
                 sidebarGhostLayoutRef.current = updatedGhost;
-                setLiveLayouts(resolveCollisions([...layouts, updatedGhost], SIDEBAR_GHOST_ID));
+                setLiveLayouts(
+                    resolveCollisions(
+                        [...layouts, updatedGhost],
+                        SIDEBAR_GHOST_ID,
+                    ),
+                );
             } else if (data?.fromGrid) {
                 const activeId = event.active.id as string;
-                const startLayout = initialLayoutsRef.current.find((l) => l.id === activeId);
+                const startLayout = initialLayoutsRef.current.find(
+                    (l) => l.id === activeId,
+                );
                 if (!startLayout) return;
 
                 const snapX = Math.round(event.delta.x / (CELL_PX + GAP_PX));
                 const snapY = Math.round(event.delta.y / (CELL_PX + GAP_PX));
+
                 const newX = Math.max(0, Math.min(GRID_COLS - startLayout.w, startLayout.x + snapX));
                 const newY = Math.max(0, startLayout.y + snapY);
 
                 const draft = initialLayoutsRef.current.map((l) =>
-                    l.id === activeId ? {...l, x: newX, y: newY} : l,
+                    l.id === activeId ? { ...l, x: newX, y: newY } : l,
                 );
                 setLiveLayouts(resolveCollisions(draft, activeId));
             }
@@ -170,10 +198,14 @@ export function EditorLayout({
 
     const handleDragEnd = useCallback(
         (event: DragEndEvent) => {
-            const data = event.active.data.current as Record<string, unknown> | undefined;
+            const data = event.active.data.current as
+                | Record<string, unknown>
+                | undefined;
 
             if (data?.fromSidebar) {
-                const canvasEl = document.querySelector('[data-canvas="true"]') as HTMLElement | null;
+                const canvasEl = document.querySelector(
+                    '[data-canvas="true"]',
+                ) as HTMLElement | null;
                 const origin = activatorCoordsRef.current;
                 const rect = canvasEl?.getBoundingClientRect();
                 const finalX = (origin?.x ?? 0) + event.delta.x;
@@ -184,20 +216,51 @@ export function EditorLayout({
                     delta: event.delta,
                     finalX,
                     finalY,
-                    rect: rect ? { left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom } : null,
-                    isOverCanvas: rect ? (finalX >= rect.left && finalX <= rect.right && finalY >= rect.top && finalY <= rect.bottom) : false,
+                    rect: rect
+                        ? {
+                              left: rect.left,
+                              right: rect.right,
+                              top: rect.top,
+                              bottom: rect.bottom,
+                          }
+                        : null,
+                    isOverCanvas: rect
+                        ? finalX >= rect.left &&
+                          finalX <= rect.right &&
+                          finalY >= rect.top &&
+                          finalY <= rect.bottom
+                        : false,
                 });
 
                 const ghost = sidebarGhostLayoutRef.current;
 
                 if (ghost) {
-                    (window as Window & { __pendingDropPosition?: { x: number; y: number } }).__pendingDropPosition =
-                        {x: ghost.x, y: ghost.y};
+                    (
+                        window as Window & {
+                            __pendingDropPosition?: { x: number; y: number };
+                        }
+                    ).__pendingDropPosition = { x: ghost.x, y: ghost.y };
+
+                    // ДОДАЄМО ЦЕ: Зберігаємо розсунуту сітку (без привида)
+                    const layoutsWithoutGhost = liveLayouts.filter(
+                        (l) => l.id !== SIDEBAR_GHOST_ID
+                    );
+                    onLayoutChange(layoutsWithoutGhost);
+
                 } else {
                     const widgetType = data.widgetType as Widget['type'];
-                    const catalogItem = WIDGET_CATALOG.find((c) => c.type === widgetType);
-                    (window as Window & { __pendingDropPosition?: { x: number; y: number } }).__pendingDropPosition =
-                        findFreePosition(layouts, catalogItem?.defaultW ?? 3, catalogItem?.defaultH ?? 3);
+                    const catalogItem = WIDGET_CATALOG.find(
+                        (c) => c.type === widgetType,
+                    );
+                    (
+                        window as Window & {
+                            __pendingDropPosition?: { x: number; y: number };
+                        }
+                    ).__pendingDropPosition = findFreePosition(
+                        layouts,
+                        catalogItem?.defaultW ?? 3,
+                        catalogItem?.defaultH ?? 3,
+                    );
                 }
 
                 onAddWidget(data.widgetType as Widget['type']);
@@ -226,7 +289,7 @@ export function EditorLayout({
         : null;
 
     const sidebarGhostWidget: Widget | null = draggingSidebarType
-        ? ({id: SIDEBAR_GHOST_ID, type: draggingSidebarType} as Widget)
+        ? ({ id: SIDEBAR_GHOST_ID, type: draggingSidebarType } as Widget)
         : null;
 
     return (
@@ -239,7 +302,7 @@ export function EditorLayout({
             onDragCancel={handleDragCancel}
         >
             <div className="flex h-full flex-1 min-w-0">
-                <EditorSidebar theme={theme} onThemeChange={onThemeChange} onAddWidget={onAddWidget}/>
+                <EditorSidebar onAddWidget={onAddWidget} />
 
                 <BentoGrid
                     widgets={widgets}
@@ -276,7 +339,9 @@ export function EditorLayout({
                             whiteSpace: 'nowrap',
                         }}
                     >
-                        <span style={{fontSize: 16}}>{sidebarCatalogItem.icon}</span>
+                        <span style={{ fontSize: 16 }}>
+                            {sidebarCatalogItem.icon}
+                        </span>
                         {sidebarCatalogItem.label}
                     </div>
                 ) : null}

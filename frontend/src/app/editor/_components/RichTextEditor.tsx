@@ -24,7 +24,9 @@ const FontSize = Extension.create({
                         default: null,
                         parseHTML: (el) => el.style.fontSize || null,
                         renderHTML: (attrs) =>
-                            attrs.fontSize ? { style: `font-size:${attrs.fontSize}` } : {},
+                            attrs.fontSize
+                                ? { style: `font-size:${attrs.fontSize}` }
+                                : {},
                     },
                 },
             },
@@ -65,7 +67,9 @@ function ToolBtn({
             }}
             style={{
                 background: active ? 'rgba(200,255,87,0.15)' : 'transparent',
-                border: active ? '0.5px solid rgba(200,255,87,0.4)' : '0.5px solid transparent',
+                border: active
+                    ? '0.5px solid rgba(200,255,87,0.4)'
+                    : '0.5px solid transparent',
                 color: active ? 'var(--t-accent)' : 'var(--t-muted)',
                 borderRadius: 6,
                 padding: '2px 6px',
@@ -90,7 +94,21 @@ const FONTS = [
     { label: 'Helvetica', value: 'Helvetica, Arial, sans-serif' },
 ];
 
-const FONT_SIZES = ['10', '11', '12', '13', '14', '16', '18', '20', '24', '28', '32', '36', '48'];
+const FONT_SIZES = [
+    '10',
+    '11',
+    '12',
+    '13',
+    '14',
+    '16',
+    '18',
+    '20',
+    '24',
+    '28',
+    '32',
+    '36',
+    '48',
+];
 
 // ── Main component ────────────────────────────────────────────────────────────
 interface RichTextEditorProps {
@@ -137,11 +155,12 @@ export function RichTextEditor({
         immediatelyRender: false,
     });
 
-    // Sync external value changes (e.g. reset)
     useEffect(() => {
         if (!editor) return;
         if (editor.getHTML() !== value) {
-            editor.commands.setContent(value || '<p></p>', false);
+            editor.commands.setContent(value || '<p></p>', {
+                emitUpdate: false,
+            });
         }
     }, [value, editor]);
 
@@ -170,21 +189,46 @@ export function RichTextEditor({
                 }}
             >
                 {/* Bold / Italic / Underline / Strike */}
-                <ToolBtn active={editor.isActive('bold')} onClick={() => editor.chain().focus().toggleBold().run()} title="Bold">
+                <ToolBtn
+                    active={editor.isActive('bold')}
+                    onClick={() => editor.chain().focus().toggleBold().run()}
+                    title="Bold"
+                >
                     <b>B</b>
                 </ToolBtn>
-                <ToolBtn active={editor.isActive('italic')} onClick={() => editor.chain().focus().toggleItalic().run()} title="Italic">
+                <ToolBtn
+                    active={editor.isActive('italic')}
+                    onClick={() => editor.chain().focus().toggleItalic().run()}
+                    title="Italic"
+                >
                     <i>I</i>
                 </ToolBtn>
-                <ToolBtn active={editor.isActive('underline')} onClick={() => editor.chain().focus().toggleUnderline().run()} title="Underline">
+                <ToolBtn
+                    active={editor.isActive('underline')}
+                    onClick={() =>
+                        editor.chain().focus().toggleUnderline().run()
+                    }
+                    title="Underline"
+                >
                     <u>U</u>
                 </ToolBtn>
-                <ToolBtn active={editor.isActive('strike')} onClick={() => editor.chain().focus().toggleStrike().run()} title="Strikethrough">
+                <ToolBtn
+                    active={editor.isActive('strike')}
+                    onClick={() => editor.chain().focus().toggleStrike().run()}
+                    title="Strikethrough"
+                >
                     <s>S</s>
                 </ToolBtn>
 
                 {/* Divider */}
-                <div style={{ width: 1, height: 14, background: 'var(--t-border)', margin: '0 2px' }} />
+                <div
+                    style={{
+                        width: 1,
+                        height: 14,
+                        background: 'var(--t-border)',
+                        margin: '0 2px',
+                    }}
+                />
 
                 {/* Font family */}
                 <select
@@ -192,7 +236,11 @@ export function RichTextEditor({
                     value={editor.getAttributes('textStyle').fontFamily || ''}
                     onChange={(e) => {
                         if (e.target.value) {
-                            editor.chain().focus().setFontFamily(e.target.value).run();
+                            editor
+                                .chain()
+                                .focus()
+                                .setFontFamily(e.target.value)
+                                .run();
                         } else {
                             editor.chain().focus().unsetFontFamily().run();
                         }
@@ -218,12 +266,20 @@ export function RichTextEditor({
                 {/* Font size */}
                 <select
                     title="Font size"
-                    value={editor.getAttributes('textStyle').fontSize?.replace('px', '') || ''}
+                    value={
+                        editor
+                            .getAttributes('textStyle')
+                            .fontSize?.replace('px', '') || ''
+                    }
                     onChange={(e) => {
                         if (e.target.value) {
-                            (editor.chain().focus() as any).setFontSize(`${e.target.value}px`).run();
+                            (editor.chain().focus() as any)
+                                .setFontSize(`${e.target.value}px`)
+                                .run();
                         } else {
-                            (editor.chain().focus() as any).unsetFontSize().run();
+                            (editor.chain().focus() as any)
+                                .unsetFontSize()
+                                .run();
                         }
                     }}
                     style={{
@@ -247,15 +303,42 @@ export function RichTextEditor({
                 </select>
 
                 {/* Divider */}
-                <div style={{ width: 1, height: 14, background: 'var(--t-border)', margin: '0 2px' }} />
+                <div
+                    style={{
+                        width: 1,
+                        height: 14,
+                        background: 'var(--t-border)',
+                        margin: '0 2px',
+                    }}
+                />
 
                 {/* Text color */}
-                <label title="Text color" style={{ display: 'flex', alignItems: 'center', gap: 3, cursor: 'pointer' }}>
-                    <span style={{ fontSize: 11, color: 'var(--t-muted)' }}>A</span>
+                <label
+                    title="Text color"
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 3,
+                        cursor: 'pointer',
+                    }}
+                >
+                    <span style={{ fontSize: 11, color: 'var(--t-muted)' }}>
+                        A
+                    </span>
                     <input
                         type="color"
-                        value={currentColor.startsWith('#') ? currentColor : '#f0efee'}
-                        onChange={(e) => editor.chain().focus().setColor(e.target.value).run()}
+                        value={
+                            currentColor.startsWith('#')
+                                ? currentColor
+                                : '#f0efee'
+                        }
+                        onChange={(e) =>
+                            editor
+                                .chain()
+                                .focus()
+                                .setColor(e.target.value)
+                                .run()
+                        }
                         style={{
                             width: 18,
                             height: 18,
@@ -269,7 +352,17 @@ export function RichTextEditor({
                 </label>
 
                 {/* Clear formatting */}
-                <ToolBtn onClick={() => editor.chain().focus().clearNodes().unsetAllMarks().run()} title="Clear formatting">
+                <ToolBtn
+                    onClick={() =>
+                        editor
+                            .chain()
+                            .focus()
+                            .clearNodes()
+                            .unsetAllMarks()
+                            .run()
+                    }
+                    title="Clear formatting"
+                >
                     ✕
                 </ToolBtn>
             </div>

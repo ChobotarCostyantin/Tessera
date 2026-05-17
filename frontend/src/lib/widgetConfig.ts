@@ -1,14 +1,9 @@
-import { Widget, WidgetLayout, Theme } from '@/types/widget';
+import { Widget, WidgetLayout } from '@/types/widget';
 
-// Grid constants
-// A4 @ 96dpi = 794px wide. 12 cols with 10px gap:
-// colWidth = (794 - 11*10) / 12 = (794 - 110) / 12 = 57px
-export const GRID_COLS = 12;
-export const GRID_ROWS = 16; // A4 page height limit
-export const CELL_PX = 57; // px per grid unit
-export const GAP_PX = 10; // px gap between cells
+export const GRID_COLS = 21;
+export const CELL_PX = 57;
+export const GAP_PX = 10;
 
-// Pixel helpers
 export function gridToPx(units: number): number {
     return units * CELL_PX + (units - 1) * GAP_PX;
 }
@@ -19,8 +14,7 @@ export function gridToOffset(pos: number): number {
     return pos * (CELL_PX + GAP_PX);
 }
 
-export const CANVAS_W = gridToOffset(GRID_COLS) - GAP_PX; // 794px
-export const CANVAS_H = gridToOffset(GRID_ROWS) - GAP_PX; // A4 height
+export const CANVAS_W = gridToOffset(GRID_COLS) - GAP_PX;
 
 export const DEFAULT_WIDGETS: Widget[] = [
     {
@@ -162,39 +156,6 @@ export const WIDGET_CATALOG = [
         defaultH: 3,
     },
 ];
-
-export const THEMES: Record<Theme, Record<string, string>> = {
-    dark: {
-        '--t-bg': '#0f0f10',
-        '--t-surface': '#1a1a1d',
-        '--t-surface2': '#242428',
-        '--t-border': 'rgba(255,255,255,0.08)',
-        '--t-accent': '#c8ff57',
-        '--t-accent2': '#7c6dff',
-        '--t-text': '#f0efee',
-        '--t-muted': 'rgba(240,239,238,0.45)',
-    },
-    light: {
-        '--t-bg': '#f0ede8',
-        '--t-surface': '#ffffff',
-        '--t-surface2': '#f5f2ed',
-        '--t-border': 'rgba(0,0,0,0.08)',
-        '--t-accent': '#5b4fff',
-        '--t-accent2': '#1a1a1a',
-        '--t-text': '#1a1a1a',
-        '--t-muted': 'rgba(26,26,26,0.45)',
-    },
-    warm: {
-        '--t-bg': '#faf5eb',
-        '--t-surface': '#fff9f0',
-        '--t-surface2': '#f5edd8',
-        '--t-border': 'rgba(133,79,11,0.12)',
-        '--t-accent': '#854f0b',
-        '--t-accent2': '#ef9f27',
-        '--t-text': '#2c1a06',
-        '--t-muted': 'rgba(44,26,6,0.45)',
-    },
-};
 
 export function createDefaultWidget(type: Widget['type'], id: string): Widget {
     switch (type) {
