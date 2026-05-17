@@ -119,7 +119,7 @@ export default function EditorPage() {
             const withNew = pos
                 ? [...prev, newLayout]
                 : [...prev, { ...newLayout, ...findFreePosition(prev, defaultW, defaultH) }];
-            return resolveCollisions(withNew, id); // ← ключове: resolve після додавання
+            return resolveCollisions(withNew, id);
         });
         setSelectedId(id);
     }, []);

@@ -1,9 +1,18 @@
+export interface WidgetAppearance {
+    bgColor?: string;
+    borderRadius?: number; // px, 0–28
+    hoverAnimation?: 'none' | 'lift' | 'glow' | 'scale';
+    textColor?: string;
+    fontFamily?: string;
+    fontSize?: number; // px base
+}
+
 export interface WidgetLayout {
     id: string;
-    x: number; // grid column (0-based)
-    y: number; // grid row (0-based)
-    w: number; // width in grid units
-    h: number; // height in grid units
+    x: number;
+    y: number;
+    w: number;
+    h: number;
 }
 
 export type WidgetType =
@@ -18,13 +27,14 @@ export type WidgetType =
 export interface BaseWidget {
     id: string;
     type: WidgetType;
+    appearance?: WidgetAppearance;
 }
 
 export interface AboutWidget extends BaseWidget {
     type: 'about';
-    name: string;
-    role: string;
-    bio?: string;
+    name: string;        // HTML string
+    role: string;        // HTML string
+    bio?: string;        // HTML string
     avatarEmoji?: string;
 }
 
@@ -48,13 +58,13 @@ export interface LinksWidget extends BaseWidget {
 
 export interface StatWidget extends BaseWidget {
     type: 'stat';
-    number: string;
-    label: string;
+    number: string;  // HTML string
+    label: string;   // HTML string
 }
 
 export interface QuoteWidget extends BaseWidget {
     type: 'quote';
-    text: string;
+    text: string;    // HTML string
 }
 
 export interface LocationWidget extends BaseWidget {
