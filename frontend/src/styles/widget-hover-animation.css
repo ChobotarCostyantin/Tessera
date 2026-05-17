@@ -1,0 +1,21 @@
+:root {
+    --pos-x: 0px;
+    --pos-y: 0px;
+    --glow-color: transparent;
+}
+
+.widget-position-base {
+    transform: translate3d(var(--pos-x), var(--pos-y), 0);
+}
+
+.widget-hover-lift:hover  {
+    transform: translate3d(var(--pos-x), calc(var(--pos-y) - 4px), 0);
+    box-shadow: 0 24px 48px rgba(0,0,0,0.55);
+}
+.widget-hover-glow:hover  {
+    box-shadow: 0 0 15px var(--glow-color, rgba(255,255,255,0.2));
+    border-color: transparent;
+}
+.widget-hover-scale:hover {
+    transform: translate3d(var(--pos-x), var(--pos-y), 0) scale(1.025);
+}

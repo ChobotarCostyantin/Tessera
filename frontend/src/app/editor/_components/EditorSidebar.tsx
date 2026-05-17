@@ -94,30 +94,6 @@ export function EditorSidebar({ onAddWidget }: EditorSidebarProps) {
                     ))}
                 </div>
             </div>
-
-            {/* A4 hint */}
-            <div
-                className="mt-auto rounded-xl p-3"
-                style={{
-                    background: 'rgba(200,255,87,0.04)',
-                    border: '0.5px solid rgba(200,255,87,0.12)',
-                }}
-            >
-                <p
-                    className="text-[10px] font-semibold"
-                    style={{ color: 'rgba(200,255,87,0.7)' }}
-                >
-                    📄 A4 hint
-                </p>
-                <p
-                    className="text-[10px] mt-1 leading-relaxed"
-                    style={{ color: 'var(--t-muted)' }}
-                >
-                    Grid = {12} cols × {16} rows.
-                    <br />
-                    Keep widgets inside the dashed border to fit one A4 page.
-                </p>
-            </div>
         </aside>
     );
 }

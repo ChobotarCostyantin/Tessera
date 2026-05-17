@@ -4,6 +4,7 @@ import { Widget, WidgetLayout } from '@/types/widget';
 import { WidgetRenderer } from './WidgetRenderer';
 import { ResizeHandle } from './ResizeHandle';
 import { CELL_PX, GAP_PX, gridToPx } from '@/lib/widgetConfig';
+import "@/styles/widget-hover-animation.css";
 
 interface WidgetCellProps {
     widget: Widget;
@@ -15,32 +16,15 @@ interface WidgetCellProps {
     onResize: (id: string, w: number, h: number) => void;
 }
 
-// CSS for hover animations — injected once via a <style> tag
-const HOVER_ANIMATION_CSS = `
-.widget-hover-lift:hover  { transform: translateY(-4px) !important; box-shadow: 0 24px 48px rgba(0,0,0,0.55) !important; }
-.widget-hover-glow:hover  { box-shadow: 0 0 0 2px var(--t-accent), 0 0 32px rgba(200,255,87,0.25) !important; }
-.widget-hover-scale:hover { transform: scale(1.025) !important; }
-`;
-
-let cssInjected = false;
-function injectCss() {
-    if (cssInjected || typeof document === 'undefined') return;
-    const el = document.createElement('style');
-    el.textContent = HOVER_ANIMATION_CSS;
-    document.head.appendChild(el);
-    cssInjected = true;
-}
-
 export function WidgetCell({
-    widget,
-    layout,
-    isSelected,
-    isDragging,
-    onSelect,
-    onDelete,
-    onResize,
-}: WidgetCellProps) {
-    injectCss();
+                               widget,
+                               layout,
+                               isSelected,
+                               isDragging,
+                               onSelect,
+                               onDelete,
+                               onResize,
+                           }: WidgetCellProps) {
 
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: widget.id,
@@ -66,24 +50,27 @@ export function WidgetCell({
         left: 0,
         width: gridToPx(layout.w),
         height: gridToPx(layout.h),
-        transform: `translate3d(${finalX}px, ${finalY}px, 0)`,
+        '--pos-x': `${finalX}px`,
+        '--pos-y': `${finalY}px`,
         transition: isDragging
             ? 'box-shadow 0.2s, opacity 0.2s'
             : 'transform 0.25s ease-out, width 0.2s ease-out, height 0.2s ease-out, box-shadow 0.2s',
         zIndex: isDragging ? 50 : isSelected ? 10 : 1,
         opacity: isDragging ? 0.9 : 1,
-    };
+        '--glow-color': ap?.bgColor ?? 'rgba(255,255,255,0.1)',
+        borderRadius,
+    } as React.CSSProperties;
 
     const innerStyle: React.CSSProperties = {
         background: ap?.bgColor ?? 'var(--t-surface)',
         border: isSelected
             ? '1.5px solid var(--t-accent2)'
-            : '0.5px solid var(--t-border)',
+            : '1.5px solid transparent',
         boxShadow: isDragging
             ? '0 20px 50px rgba(0,0,0,0.5)'
             : isSelected
-              ? '0 0 0 1px var(--t-accent2)'
-              : 'none',
+                ? '0 0 0 1px var(--t-accent2)'
+                : 'none',
         borderRadius,
         padding: '16px',
         transition: 'transform 0.18s ease, box-shadow 0.18s ease',
@@ -93,9 +80,10 @@ export function WidgetCell({
         <div
             ref={setNodeRef}
             style={outerStyle}
-            className={`group ${hoverClass}`}
+            className={`group widget-position-base ${hoverClass}`}
             onClick={onSelect}
         >
+            {/* ... решта вашої розмітки (drag handle, delete button тощо) залишається без змін ... */}
             <div
                 className="relative w-full h-full overflow-hidden"
                 style={innerStyle}
