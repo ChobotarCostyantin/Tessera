@@ -73,18 +73,12 @@ export function BentoGrid({
         ? liveLayouts.find((l) => l.id === sidebarGhostId)
         : null;
 
-    const maxRow = Math.max(
-        12,
-        ...liveLayouts.map((l) => l.y + l.h)
-    );
+    const maxRow = Math.max(23, ...liveLayouts.map((l) => l.y + l.h));
 
     const dynamicCanvasH = maxRow * (CELL_PX + GAP_PX) - GAP_PX;
 
     return (
-        <main
-            className="flex-1 overflow-auto p-6 flex flex-col"
-
-        >
+        <main className="flex-1 overflow-auto p-6 flex flex-col">
             {/* Grid info header */}
             <div className="flex items-center justify-center gap-2 mb-4">
                 <span

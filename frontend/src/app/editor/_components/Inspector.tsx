@@ -64,45 +64,63 @@ function PlainInput({
     );
 }
 
-function PlainTextArea({
-    value,
-    onChange,
-    placeholder,
-    minHeight = '64px',
-    helperText,
-}: {
-    value: string;
-    onChange: (v: string) => void;
-    placeholder?: string;
-    minHeight?: string;
-    helperText?: string;
-}) {
-    return (
-        <>
-            <textarea
-                className="w-full rounded-lg px-2.5 py-1.5 text-[12px] outline-none resize-none"
-                style={{
-                    background: 'var(--t-surface2)',
-                    border: '0.5px solid var(--t-border)',
-                    color: 'var(--t-text)',
-                    fontFamily: 'inherit',
-                    minHeight,
-                }}
-                value={value}
-                placeholder={placeholder}
-                onChange={(e) => onChange(e.target.value)}
-            />
-            {helperText && (
-                <p
-                    className="text-[10px] mt-1"
-                    style={{ color: 'var(--t-muted)' }}
-                >
-                    {helperText}
-                </p>
-            )}
-        </>
-    );
-}
+// function PlainTextArea({
+//                            value,
+//                            onChange,
+//                            placeholder,
+//                            minHeight = '64px',
+//                            helperText,
+//                        }: {
+//     value: string;
+//     onChange: (v: string) => void;
+//     placeholder?: string;
+//     minHeight?: string;
+//     helperText?: string;
+// }) {
+//     const [localValue, setLocalValue] = React.useState(value);
+//     const [isFocused, setIsFocused] = React.useState(false);
+//     React.useEffect(() => {
+//         if (!isFocused) {
+//             setLocalValue(value);
+//         }
+//     }, [value, isFocused]);
+//
+//     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+//         setLocalValue(e.target.value); // Показуємо юзеру його сирий текст
+//         onChange(e.target.value);      // Відправляємо дані для збереження
+//     };
+//
+//     return (
+//         <>
+//             <textarea
+//                 className="w-full rounded-lg px-2.5 py-1.5 text-[12px] outline-none resize-none"
+//                 style={{
+//                     background: 'var(--t-surface2)',
+//                     border: '0.5px solid var(--t-border)',
+//                     color: 'var(--t-text)',
+//                     fontFamily: 'inherit',
+//                     minHeight,
+//                 }}
+//                 value={isFocused ? localValue : value}
+//                 onFocus={() => setIsFocused(true)}
+//                 onBlur={() => {
+//                     setIsFocused(false);
+//                     setLocalValue(value);
+//                 }}
+//                 placeholder={placeholder}
+//                 onChange={handleChange}
+//             />
+//             {helperText && (
+//                 <p
+//                     className="text-[10px] mt-1"
+//                     style={{ color: 'var(--t-muted)' }}
+//                 >
+//                     {helperText}
+//                 </p>
+//             )}
+//         </>
+//     );
+// }
 
 // ── Color picker popover ──────────────────────────────────────────────────────
 
@@ -421,181 +439,130 @@ function StyleTab({
 
 // ── Content tab ───────────────────────────────────────────────────────────────
 
-function ContentTab({
-    widget,
-    patch,
-}: {
-    widget: Widget;
-    patch: (p: Partial<Widget>) => void;
-}) {
+function ContentTab({ widget, patch }: { widget: any; patch: (p: any) => void }) {
+    const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+            alert('Файл занадто великий! Максимум 2MB.');
+            return;
+        }
+        const reader = new FileReader();
+        reader.onload = (event) => patch({ imageUrl: event.target?.result as string });
+        reader.readAsDataURL(file);
+    };
+
     switch (widget.type) {
-        case 'about':
+        case 'text':
             return (
-                <>
-                    <Group label="Name">
-                        <RichTextEditor
-                            value={widget.name}
-                            onChange={(v) => patch({ name: v } as any)}
-                            placeholder="Your name"
-                            singleLine
-                            minHeight={36}
-                        />
-                    </Group>
-                    <Group label="Role">
-                        <RichTextEditor
-                            value={widget.role}
-                            onChange={(v) => patch({ role: v } as any)}
-                            placeholder="Your role"
-                            singleLine
-                            minHeight={36}
-                        />
-                    </Group>
-                    <Group label="Bio">
-                        <RichTextEditor
-                            value={widget.bio ?? ''}
-                            onChange={(v) => patch({ bio: v } as any)}
-                            placeholder="Short bio..."
-                            minHeight={80}
-                        />
-                    </Group>
-                </>
-            );
-
-        case 'stat':
-            return (
-                <>
-                    <Group label="Number">
-                        <RichTextEditor
-                            value={widget.number}
-                            onChange={(v) => patch({ number: v } as any)}
-                            placeholder="42"
-                            singleLine
-                            minHeight={36}
-                        />
-                    </Group>
-                    <Group label="Label">
-                        <RichTextEditor
-                            value={widget.label}
-                            onChange={(v) => patch({ label: v } as any)}
-                            placeholder="Description"
-                            singleLine
-                            minHeight={36}
-                        />
-                    </Group>
-                </>
-            );
-
-        case 'quote':
-            return (
-                <Group label="Quote text">
+                <Group label="Content">
                     <RichTextEditor
-                        value={widget.text}
-                        onChange={(v) => patch({ text: v } as any)}
-                        placeholder="Your quote..."
-                        minHeight={80}
+                        value={widget.content || widget.bio || ''}
+                        onChange={(v) => patch(widget.type === 'about' ? { bio: v } : { content: v })}
+                        placeholder="Write something..."
+                        minHeight={150}
                     />
                 </Group>
             );
 
-        case 'location':
+        case 'image':
             return (
                 <>
-                    <Group label="City">
-                        <PlainInput
-                            value={widget.city}
-                            onChange={(v) => patch({ city: v } as any)}
-                        />
+                    <Group label="Upload from PC">
+                        <label className="flex flex-col items-center justify-center w-full p-4 rounded-lg cursor-pointer transition-colors hover:bg-(--t-surface)" style={{ background: 'var(--t-surface2)', border: '1px dashed var(--t-border)', color: 'var(--t-text)' }}>
+                            <span className="text-xl mb-1">📁</span>
+                            <span className="text-[11px] font-medium">Choose a photo</span>
+                            <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                        </label>
                     </Group>
-                    <Group label="Country">
-                        <PlainInput
-                            value={widget.country}
-                            onChange={(v) => patch({ country: v } as any)}
-                        />
+                    <Group label="Or paste the URL">
+                        <PlainInput value={widget.imageUrl || ''} onChange={(v) => patch({ imageUrl: v })} placeholder="https://..." />
                     </Group>
-                    <Group label="Availability">
-                        <PlainInput
-                            value={widget.available}
-                            onChange={(v) => patch({ available: v } as any)}
-                            placeholder="Open to remote"
-                        />
+                    <Group label="Object Fit">
+                        <div className="flex gap-2">
+                            {['cover', 'contain'].map(fit => (
+                                <button key={fit} onClick={() => patch({ objectFit: fit })} className={`flex-1 py-1.5 text-[11px] rounded border transition-colors ${widget.objectFit === fit ? 'border-(--t-accent) text-(--t-accent) bg-[rgba(200,255,87,0.1)]' : 'border-(--t-border) text-(--t-muted)'}`}>
+                                    {fit}
+                                </button>
+                            ))}
+                        </div>
                     </Group>
                 </>
-            );
-
-        case 'skills':
-            return (
-                <Group label="Skills (one per line)">
-                    <PlainTextArea
-                        value={widget.skills.map((s) => s.label).join('\n')}
-                        onChange={(v) => {
-                            const colors: Array<
-                                'green' | 'purple' | 'amber' | 'blue'
-                            > = ['blue', 'purple', 'green', 'amber'];
-                            const skills = v
-                                .split('\n')
-                                .filter(Boolean)
-                                .map((label, i) => ({
-                                    label,
-                                    color: colors[i % 4],
-                                }));
-                            patch({ skills } as any);
-                        }}
-                        minHeight="100px"
-                    />
-                </Group>
             );
 
         case 'experience':
             return (
-                <Group label="Items (role | company | period)">
-                    <PlainTextArea
-                        value={widget.items
-                            .map(
-                                (i) => `${i.role} | ${i.company} | ${i.period}`,
-                            )
-                            .join('\n')}
-                        onChange={(v) => {
-                            const items = v
-                                .split('\n')
-                                .filter(Boolean)
-                                .map((line) => {
-                                    const [
-                                        role = '',
-                                        company = '',
-                                        period = '',
-                                    ] = line.split('|').map((s) => s.trim());
-                                    return { role, company, period };
-                                });
-                            patch({ items } as any);
-                        }}
-                        minHeight="100px"
-                        helperText="Each line: Role | Company | Period"
-                    />
-                </Group>
+                <div className="flex flex-col gap-4">
+                    {(widget.items || []).map((item: any, idx: number) => (
+                        <div key={idx} className="p-3 rounded-xl" style={{ background: 'var(--t-surface2)', border: '0.5px solid var(--t-border)' }}>
+                            <div className="mb-2">
+                                <Label>Experience {idx + 1}</Label>
+                                <RichTextEditor
+                                    value={item.content || ''}
+                                    onChange={(v) => {
+                                        const newItems = [...widget.items];
+                                        newItems[idx].content = v;
+                                        patch({ items: newItems });
+                                    }}
+                                    placeholder="Describe the experience..."
+                                    minHeight={100}
+                                />
+                            </div>
+                            <button onClick={() => patch({ items: widget.items.filter((_: any, i: number) => i !== idx) })} className="w-full mt-2 py-1.5 text-[11px] font-medium rounded-lg text-[rgba(255,100,100,0.8)] border border-[rgba(255,80,80,0.2)]">
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+                    <button onClick={() => patch({ items: [...(widget.items || []), { content: '<p>New experience...</p>' }] })} className="w-full py-2.5 text-[11px] font-semibold rounded-xl border border-dashed border-(--t-border) text-(--t-text) hover:bg-(--t-surface2)">
+                        + Add experience
+                    </button>
+                </div>
             );
 
         case 'links':
             return (
-                <Group label="Links (label | url | icon)">
-                    <PlainTextArea
-                        value={widget.links
-                            .map((l) => `${l.label} | ${l.url} | ${l.icon}`)
-                            .join('\n')}
-                        onChange={(v) => {
-                            const links = v
-                                .split('\n')
-                                .filter(Boolean)
-                                .map((line) => {
-                                    const [label = '', url = '#', icon = '🔗'] =
-                                        line.split('|').map((s) => s.trim());
-                                    return { label, url, icon };
-                                });
-                            patch({ links } as any);
-                        }}
-                        minHeight="80px"
-                        helperText="Each line: Label | URL | Emoji"
-                    />
-                </Group>
+                <div className="flex flex-col gap-4">
+                    {(widget.links || []).map((link: any, idx: number) => (
+                        <div key={idx} className="p-3 rounded-xl" style={{ background: 'var(--t-surface2)', border: '0.5px solid var(--t-border)' }}>
+                            <div className="mb-2">
+                                <Label>Name</Label>
+                                <PlainInput value={link.label || ''} onChange={(v) => { const n = [...widget.links]; n[idx].label = v; patch({ links: n }); }} placeholder="Наприклад: Instagram" />
+                            </div>
+                            <div>
+                                <Label>URL</Label>
+                                <PlainInput value={link.url || ''} onChange={(v) => { const n = [...widget.links]; n[idx].url = v; patch({ links: n }); }} placeholder="https://..." />
+                            </div>
+                            <button onClick={() => patch({ links: widget.links.filter((_: any, i: number) => i !== idx) })} className="w-full mt-3 py-1.5 text-[11px] font-medium rounded-lg text-[rgba(255,100,100,0.8)] border border-[rgba(255,80,80,0.2)]">
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+                    <button onClick={() => patch({ links: [...(widget.links || []), { label: 'New link', url: '#' }] })} className="w-full py-2.5 text-[11px] font-semibold rounded-xl border border-dashed border-(--t-border) text-(--t-text) hover:bg-(--t-surface2)">
+                        + Add link
+                    </button>
+                </div>
+            );
+
+        case 'progress':
+            return (
+                <div className="flex flex-col gap-4">
+                    {(widget.items || []).map((item: any, idx: number) => (
+                        <div key={idx} className="p-3 rounded-xl" style={{ background: 'var(--t-surface2)', border: '0.5px solid var(--t-border)' }}>
+                            <div className="mb-2">
+                                <Label>name</Label>
+                                <PlainInput value={item.label || ''} onChange={(v) => { const n = [...widget.items]; n[idx].label = v; patch({ items: n }); }} />
+                            </div>
+                            <SliderField label="Percentage" value={item.progress || 0} min={0} max={100} unit="%" onChange={(v) => { const n = [...widget.items]; n[idx].progress = v; patch({ items: n }); }} />
+                            <ColorField label="Color" value={item.color || '#a89bff'} onChange={(c) => { const n = [...widget.items]; n[idx].color = c; patch({ items: n }); }} />
+                            <button onClick={() => patch({ items: widget.items.filter((_: any, i: number) => i !== idx) })} className="w-full mt-2 py-1.5 text-[11px] font-medium rounded-lg text-[rgba(255,100,100,0.8)] border border-[rgba(255,80,80,0.2)]">
+                                Remove
+                            </button>
+                        </div>
+                    ))}
+                    <button onClick={() => patch({ items: [...(widget.items || []), { label: 'New skill', progress: 50, color: '#a89bff' }] })} className="w-full py-2.5 text-[11px] font-semibold rounded-xl border border-dashed border-(--t-border) text-(--t-text) hover:bg-(--t-surface2)">
+                        + Add slider
+                    </button>
+                </div>
             );
 
         default:

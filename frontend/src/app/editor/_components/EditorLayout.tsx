@@ -13,7 +13,7 @@ import {
     useSensors,
 } from '@dnd-kit/core';
 import { Widget, WidgetLayout } from '@/types/widget';
-import {CELL_PX, GAP_PX, GRID_COLS, WIDGET_CATALOG} from '@/lib/widgetConfig';
+import { CELL_PX, GAP_PX, GRID_COLS, WIDGET_CATALOG } from '@/lib/widgetConfig';
 import { BentoGrid } from './BentoGrid';
 import { EditorSidebar } from './EditorSidebar';
 import { findFreePosition } from '@/utils/gridUtils';
@@ -184,7 +184,10 @@ export function EditorLayout({
                 const snapX = Math.round(event.delta.x / (CELL_PX + GAP_PX));
                 const snapY = Math.round(event.delta.y / (CELL_PX + GAP_PX));
 
-                const newX = Math.max(0, Math.min(GRID_COLS - startLayout.w, startLayout.x + snapX));
+                const newX = Math.max(
+                    0,
+                    Math.min(GRID_COLS - startLayout.w, startLayout.x + snapX),
+                );
                 const newY = Math.max(0, startLayout.y + snapY);
 
                 const draft = initialLayoutsRef.current.map((l) =>
@@ -243,10 +246,9 @@ export function EditorLayout({
 
                     // ДОДАЄМО ЦЕ: Зберігаємо розсунуту сітку (без привида)
                     const layoutsWithoutGhost = liveLayouts.filter(
-                        (l) => l.id !== SIDEBAR_GHOST_ID
+                        (l) => l.id !== SIDEBAR_GHOST_ID,
                     );
                     onLayoutChange(layoutsWithoutGhost);
-
                 } else {
                     const widgetType = data.widgetType as Widget['type'];
                     const catalogItem = WIDGET_CATALOG.find(

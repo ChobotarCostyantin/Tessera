@@ -4,7 +4,7 @@ import { Widget, WidgetLayout } from '@/types/widget';
 import { WidgetRenderer } from './WidgetRenderer';
 import { ResizeHandle } from './ResizeHandle';
 import { CELL_PX, GAP_PX, gridToPx } from '@/lib/widgetConfig';
-import "@/styles/widget-hover-animation.css";
+import '@/styles/widget-hover-animation.css';
 
 interface WidgetCellProps {
     widget: Widget;
@@ -17,15 +17,14 @@ interface WidgetCellProps {
 }
 
 export function WidgetCell({
-                               widget,
-                               layout,
-                               isSelected,
-                               isDragging,
-                               onSelect,
-                               onDelete,
-                               onResize,
-                           }: WidgetCellProps) {
-
+    widget,
+    layout,
+    isSelected,
+    isDragging,
+    onSelect,
+    onDelete,
+    onResize,
+}: WidgetCellProps) {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({
         id: widget.id,
         data: { layout, fromGrid: true },
@@ -69,8 +68,8 @@ export function WidgetCell({
         boxShadow: isDragging
             ? '0 20px 50px rgba(0,0,0,0.5)'
             : isSelected
-                ? '0 0 0 1px var(--t-accent2)'
-                : 'none',
+              ? '0 0 0 1px var(--t-accent2)'
+              : 'none',
         borderRadius,
         padding: '16px',
         transition: 'transform 0.18s ease, box-shadow 0.18s ease',
@@ -83,7 +82,6 @@ export function WidgetCell({
             className={`group widget-position-base ${hoverClass}`}
             onClick={onSelect}
         >
-            {/* ... решта вашої розмітки (drag handle, delete button тощо) залишається без змін ... */}
             <div
                 className="relative w-full h-full overflow-hidden"
                 style={innerStyle}

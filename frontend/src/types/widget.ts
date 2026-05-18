@@ -21,8 +21,10 @@ export type WidgetType =
     | 'experience'
     | 'links'
     | 'stat'
-    | 'quote'
-    | 'location';
+    | 'location'
+    | 'text'
+    | 'image'
+    | 'progress';
 
 export interface BaseWidget {
     id: string;
@@ -30,58 +32,45 @@ export interface BaseWidget {
     appearance?: WidgetAppearance;
 }
 
-export interface AboutWidget extends BaseWidget {
-    type: 'about';
-    name: string;
-    role: string;
-    bio?: string;
-    avatarEmoji?: string;
-}
-
-export interface SkillsWidget extends BaseWidget {
-    type: 'skills';
-    skills: Array<{
-        label: string;
-        color: 'green' | 'purple' | 'amber' | 'blue';
-    }>;
-}
-
 export interface ExperienceWidget extends BaseWidget {
     type: 'experience';
-    items: Array<{ role: string; company: string; period: string }>;
+    items: Array<{ content: string }>;
 }
 
 export interface LinksWidget extends BaseWidget {
     type: 'links';
-    links: Array<{ label: string; url: string; icon: string }>;
+    links: Array<{ label: string; url: string }>;
 }
 
-export interface StatWidget extends BaseWidget {
-    type: 'stat';
-    number: string;
+export interface TextWidget extends BaseWidget {
+    type: 'text';
+    content: string;
+}
+
+export interface ImageWidget extends BaseWidget {
+    type: 'image';
+    imageUrl: string;
+    altText?: string;
+    objectFit: 'cover' | 'contain';
+}
+
+export interface ProgressItem {
     label: string;
+    progress: number;
+    color: string;
 }
 
-export interface QuoteWidget extends BaseWidget {
-    type: 'quote';
-    text: string;
-}
-
-export interface LocationWidget extends BaseWidget {
-    type: 'location';
-    city: string;
-    country: string;
-    available: string;
+export interface ProgressWidget extends BaseWidget {
+    type: 'progress';
+    items: ProgressItem[];
 }
 
 export type Widget =
-    | AboutWidget
-    | SkillsWidget
     | ExperienceWidget
     | LinksWidget
-    | StatWidget
-    | QuoteWidget
-    | LocationWidget;
+    | TextWidget
+    | ImageWidget
+    | ProgressWidget;
 
 export interface PageConfig {
     widgets: Widget[];
