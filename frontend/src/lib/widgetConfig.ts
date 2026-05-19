@@ -65,7 +65,12 @@ export function createDefaultWidget(type: Widget['type'], id: string): Widget {
             return {
                 id,
                 type,
-                items: [{ content: '<p><strong>Senior Developer</strong><br/>TechCorp<br/><em>2020 - Present</em></p>' }],
+                items: [
+                    {
+                        content:
+                            '<p><strong>Senior Developer</strong><br/>TechCorp<br/><em>2020 - Present</em></p>',
+                    },
+                ],
             };
         case 'links':
             return {

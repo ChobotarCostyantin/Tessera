@@ -57,7 +57,7 @@ frontend/.next/
 # -------------------------
 # Environment files
 # -------------------------
-**/.env*
+backend/.env
 
 # -------------------------
 # Backend-specific

@@ -48,7 +48,6 @@ export function EditorLayout({
 
     const initialLayoutsRef = useRef<WidgetLayout[]>([]);
     const sidebarGhostLayoutRef = useRef<WidgetLayout | null>(null);
-    /** Pointer clientX/Y at drag activation — delta is added on top each move */
     const activatorCoordsRef = useRef<{ x: number; y: number } | null>(null);
 
     const sensors = useSensors(

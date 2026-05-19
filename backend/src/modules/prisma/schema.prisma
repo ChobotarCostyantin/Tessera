@@ -1,0 +1,25 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Portfolio {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  title       String
+  isPublished Boolean  @default(false)
+  pageConfig  Json     @default("{}")
+  ownerToken  String   // UUID stored in browser localStorage; replace with userId FK when auth is added
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([ownerToken])
+}

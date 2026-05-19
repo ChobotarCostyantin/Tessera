@@ -126,7 +126,7 @@ export function WidgetCell({
                     ✕
                 </button>
 
-                <div className="w-full h-full pointer-events-none">
+                <div className="w-full h-full pointer-events-none [&_a]:pointer-events-auto [&_button]:pointer-events-auto">
                     <WidgetRenderer widget={widget} />
                 </div>
 

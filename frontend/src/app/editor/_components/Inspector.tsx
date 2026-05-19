@@ -439,7 +439,13 @@ function StyleTab({
 
 // ── Content tab ───────────────────────────────────────────────────────────────
 
-function ContentTab({ widget, patch }: { widget: any; patch: (p: any) => void }) {
+function ContentTab({
+    widget,
+    patch,
+}: {
+    widget: any;
+    patch: (p: any) => void;
+}) {
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
@@ -448,7 +454,8 @@ function ContentTab({ widget, patch }: { widget: any; patch: (p: any) => void })
             return;
         }
         const reader = new FileReader();
-        reader.onload = (event) => patch({ imageUrl: event.target?.result as string });
+        reader.onload = (event) =>
+            patch({ imageUrl: event.target?.result as string });
         reader.readAsDataURL(file);
     };
 
@@ -458,7 +465,13 @@ function ContentTab({ widget, patch }: { widget: any; patch: (p: any) => void })
                 <Group label="Content">
                     <RichTextEditor
                         value={widget.content || widget.bio || ''}
-                        onChange={(v) => patch(widget.type === 'about' ? { bio: v } : { content: v })}
+                        onChange={(v) =>
+                            patch(
+                                widget.type === 'about'
+                                    ? { bio: v }
+                                    : { content: v },
+                            )
+                        }
                         placeholder="Write something..."
                         minHeight={150}
                     />
@@ -469,19 +482,41 @@ function ContentTab({ widget, patch }: { widget: any; patch: (p: any) => void })
             return (
                 <>
                     <Group label="Upload from PC">
-                        <label className="flex flex-col items-center justify-center w-full p-4 rounded-lg cursor-pointer transition-colors hover:bg-(--t-surface)" style={{ background: 'var(--t-surface2)', border: '1px dashed var(--t-border)', color: 'var(--t-text)' }}>
+                        <label
+                            className="flex flex-col items-center justify-center w-full p-4 rounded-lg cursor-pointer transition-colors hover:bg-(--t-surface)"
+                            style={{
+                                background: 'var(--t-surface2)',
+                                border: '1px dashed var(--t-border)',
+                                color: 'var(--t-text)',
+                            }}
+                        >
                             <span className="text-xl mb-1">📁</span>
-                            <span className="text-[11px] font-medium">Choose a photo</span>
-                            <input type="file" accept="image/*" className="hidden" onChange={handleFileUpload} />
+                            <span className="text-[11px] font-medium">
+                                Choose a photo
+                            </span>
+                            <input
+                                type="file"
+                                accept="image/*"
+                                className="hidden"
+                                onChange={handleFileUpload}
+                            />
                         </label>
                     </Group>
                     <Group label="Or paste the URL">
-                        <PlainInput value={widget.imageUrl || ''} onChange={(v) => patch({ imageUrl: v })} placeholder="https://..." />
+                        <PlainInput
+                            value={widget.imageUrl || ''}
+                            onChange={(v) => patch({ imageUrl: v })}
+                            placeholder="https://..."
+                        />
                     </Group>
                     <Group label="Object Fit">
                         <div className="flex gap-2">
-                            {['cover', 'contain'].map(fit => (
-                                <button key={fit} onClick={() => patch({ objectFit: fit })} className={`flex-1 py-1.5 text-[11px] rounded border transition-colors ${widget.objectFit === fit ? 'border-(--t-accent) text-(--t-accent) bg-[rgba(200,255,87,0.1)]' : 'border-(--t-border) text-(--t-muted)'}`}>
+                            {['cover', 'contain'].map((fit) => (
+                                <button
+                                    key={fit}
+                                    onClick={() => patch({ objectFit: fit })}
+                                    className={`flex-1 py-1.5 text-[11px] rounded border transition-colors ${widget.objectFit === fit ? 'border-(--t-accent) text-(--t-accent) bg-[rgba(200,255,87,0.1)]' : 'border-(--t-border) text-(--t-muted)'}`}
+                                >
                                     {fit}
                                 </button>
                             ))}
@@ -494,7 +529,14 @@ function ContentTab({ widget, patch }: { widget: any; patch: (p: any) => void })
             return (
                 <div className="flex flex-col gap-4">
                     {(widget.items || []).map((item: any, idx: number) => (
-                        <div key={idx} className="p-3 rounded-xl" style={{ background: 'var(--t-surface2)', border: '0.5px solid var(--t-border)' }}>
+                        <div
+                            key={idx}
+                            className="p-3 rounded-xl"
+                            style={{
+                                background: 'var(--t-surface2)',
+                                border: '0.5px solid var(--t-border)',
+                            }}
+                        >
                             <div className="mb-2">
                                 <Label>Experience {idx + 1}</Label>
                                 <RichTextEditor
@@ -508,12 +550,31 @@ function ContentTab({ widget, patch }: { widget: any; patch: (p: any) => void })
                                     minHeight={100}
                                 />
                             </div>
-                            <button onClick={() => patch({ items: widget.items.filter((_: any, i: number) => i !== idx) })} className="w-full mt-2 py-1.5 text-[11px] font-medium rounded-lg text-[rgba(255,100,100,0.8)] border border-[rgba(255,80,80,0.2)]">
+                            <button
+                                onClick={() =>
+                                    patch({
+                                        items: widget.items.filter(
+                                            (_: any, i: number) => i !== idx,
+                                        ),
+                                    })
+                                }
+                                className="w-full mt-2 py-1.5 text-[11px] font-medium rounded-lg text-[rgba(255,100,100,0.8)] border border-[rgba(255,80,80,0.2)]"
+                            >
                                 Remove
                             </button>
                         </div>
                     ))}
-                    <button onClick={() => patch({ items: [...(widget.items || []), { content: '<p>New experience...</p>' }] })} className="w-full py-2.5 text-[11px] font-semibold rounded-xl border border-dashed border-(--t-border) text-(--t-text) hover:bg-(--t-surface2)">
+                    <button
+                        onClick={() =>
+                            patch({
+                                items: [
+                                    ...(widget.items || []),
+                                    { content: '<p>New experience...</p>' },
+                                ],
+                            })
+                        }
+                        className="w-full py-2.5 text-[11px] font-semibold rounded-xl border border-dashed border-(--t-border) text-(--t-text) hover:bg-(--t-surface2)"
+                    >
                         + Add experience
                     </button>
                 </div>
@@ -523,21 +584,63 @@ function ContentTab({ widget, patch }: { widget: any; patch: (p: any) => void })
             return (
                 <div className="flex flex-col gap-4">
                     {(widget.links || []).map((link: any, idx: number) => (
-                        <div key={idx} className="p-3 rounded-xl" style={{ background: 'var(--t-surface2)', border: '0.5px solid var(--t-border)' }}>
+                        <div
+                            key={idx}
+                            className="p-3 rounded-xl"
+                            style={{
+                                background: 'var(--t-surface2)',
+                                border: '0.5px solid var(--t-border)',
+                            }}
+                        >
                             <div className="mb-2">
                                 <Label>Name</Label>
-                                <PlainInput value={link.label || ''} onChange={(v) => { const n = [...widget.links]; n[idx].label = v; patch({ links: n }); }} placeholder="Наприклад: Instagram" />
+                                <PlainInput
+                                    value={link.label || ''}
+                                    onChange={(v) => {
+                                        const n = [...widget.links];
+                                        n[idx].label = v;
+                                        patch({ links: n });
+                                    }}
+                                    placeholder="Наприклад: Instagram"
+                                />
                             </div>
                             <div>
                                 <Label>URL</Label>
-                                <PlainInput value={link.url || ''} onChange={(v) => { const n = [...widget.links]; n[idx].url = v; patch({ links: n }); }} placeholder="https://..." />
+                                <PlainInput
+                                    value={link.url || ''}
+                                    onChange={(v) => {
+                                        const n = [...widget.links];
+                                        n[idx].url = v;
+                                        patch({ links: n });
+                                    }}
+                                    placeholder="https://..."
+                                />
                             </div>
-                            <button onClick={() => patch({ links: widget.links.filter((_: any, i: number) => i !== idx) })} className="w-full mt-3 py-1.5 text-[11px] font-medium rounded-lg text-[rgba(255,100,100,0.8)] border border-[rgba(255,80,80,0.2)]">
+                            <button
+                                onClick={() =>
+                                    patch({
+                                        links: widget.links.filter(
+                                            (_: any, i: number) => i !== idx,
+                                        ),
+                                    })
+                                }
+                                className="w-full mt-3 py-1.5 text-[11px] font-medium rounded-lg text-[rgba(255,100,100,0.8)] border border-[rgba(255,80,80,0.2)]"
+                            >
                                 Remove
                             </button>
                         </div>
                     ))}
-                    <button onClick={() => patch({ links: [...(widget.links || []), { label: 'New link', url: '#' }] })} className="w-full py-2.5 text-[11px] font-semibold rounded-xl border border-dashed border-(--t-border) text-(--t-text) hover:bg-(--t-surface2)">
+                    <button
+                        onClick={() =>
+                            patch({
+                                links: [
+                                    ...(widget.links || []),
+                                    { label: 'New link', url: '#' },
+                                ],
+                            })
+                        }
+                        className="w-full py-2.5 text-[11px] font-semibold rounded-xl border border-dashed border-(--t-border) text-(--t-text) hover:bg-(--t-surface2)"
+                    >
                         + Add link
                     </button>
                 </div>
@@ -547,19 +650,75 @@ function ContentTab({ widget, patch }: { widget: any; patch: (p: any) => void })
             return (
                 <div className="flex flex-col gap-4">
                     {(widget.items || []).map((item: any, idx: number) => (
-                        <div key={idx} className="p-3 rounded-xl" style={{ background: 'var(--t-surface2)', border: '0.5px solid var(--t-border)' }}>
+                        <div
+                            key={idx}
+                            className="p-3 rounded-xl"
+                            style={{
+                                background: 'var(--t-surface2)',
+                                border: '0.5px solid var(--t-border)',
+                            }}
+                        >
                             <div className="mb-2">
                                 <Label>name</Label>
-                                <PlainInput value={item.label || ''} onChange={(v) => { const n = [...widget.items]; n[idx].label = v; patch({ items: n }); }} />
+                                <PlainInput
+                                    value={item.label || ''}
+                                    onChange={(v) => {
+                                        const n = [...widget.items];
+                                        n[idx].label = v;
+                                        patch({ items: n });
+                                    }}
+                                />
                             </div>
-                            <SliderField label="Percentage" value={item.progress || 0} min={0} max={100} unit="%" onChange={(v) => { const n = [...widget.items]; n[idx].progress = v; patch({ items: n }); }} />
-                            <ColorField label="Color" value={item.color || '#a89bff'} onChange={(c) => { const n = [...widget.items]; n[idx].color = c; patch({ items: n }); }} />
-                            <button onClick={() => patch({ items: widget.items.filter((_: any, i: number) => i !== idx) })} className="w-full mt-2 py-1.5 text-[11px] font-medium rounded-lg text-[rgba(255,100,100,0.8)] border border-[rgba(255,80,80,0.2)]">
+                            <SliderField
+                                label="Percentage"
+                                value={item.progress || 0}
+                                min={0}
+                                max={100}
+                                unit="%"
+                                onChange={(v) => {
+                                    const n = [...widget.items];
+                                    n[idx].progress = v;
+                                    patch({ items: n });
+                                }}
+                            />
+                            <ColorField
+                                label="Color"
+                                value={item.color || '#a89bff'}
+                                onChange={(c) => {
+                                    const n = [...widget.items];
+                                    n[idx].color = c;
+                                    patch({ items: n });
+                                }}
+                            />
+                            <button
+                                onClick={() =>
+                                    patch({
+                                        items: widget.items.filter(
+                                            (_: any, i: number) => i !== idx,
+                                        ),
+                                    })
+                                }
+                                className="w-full mt-2 py-1.5 text-[11px] font-medium rounded-lg text-[rgba(255,100,100,0.8)] border border-[rgba(255,80,80,0.2)]"
+                            >
                                 Remove
                             </button>
                         </div>
                     ))}
-                    <button onClick={() => patch({ items: [...(widget.items || []), { label: 'New skill', progress: 50, color: '#a89bff' }] })} className="w-full py-2.5 text-[11px] font-semibold rounded-xl border border-dashed border-(--t-border) text-(--t-text) hover:bg-(--t-surface2)">
+                    <button
+                        onClick={() =>
+                            patch({
+                                items: [
+                                    ...(widget.items || []),
+                                    {
+                                        label: 'New skill',
+                                        progress: 50,
+                                        color: '#a89bff',
+                                    },
+                                ],
+                            })
+                        }
+                        className="w-full py-2.5 text-[11px] font-semibold rounded-xl border border-dashed border-(--t-border) text-(--t-text) hover:bg-(--t-surface2)"
+                    >
                         + Add slider
                     </button>
                 </div>

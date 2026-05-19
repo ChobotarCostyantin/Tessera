@@ -3,7 +3,6 @@
 import React from 'react';
 import { Widget } from '@/types/widget';
 
-
 function RichField({
     html,
     className,
@@ -36,8 +35,14 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
             return (
                 <div className="flex flex-col h-full overflow-y-auto custom-scrollbar gap-3">
                     {widget.items?.map((item, i) => (
-                        <div key={i} className="relative pl-3 border-l-[1.5px] border-(--t-border)">
-                            <RichField html={item.content} style={{ color: 'var(--t-text)' }} />
+                        <div
+                            key={i}
+                            className="relative pl-3 border-l-[1.5px] border-(--t-border)"
+                        >
+                            <RichField
+                                html={item.content}
+                                style={{ color: 'var(--t-text)' }}
+                            />
                         </div>
                     ))}
                 </div>

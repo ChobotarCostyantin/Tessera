@@ -4,6 +4,7 @@
   "description": "",
   "author": "",
   "private": true,
+  "type": "module",
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
@@ -11,12 +12,22 @@
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
-    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix"
+    "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "prisma:generate": "prisma generate --config=./src/modules/prisma/prisma.config.ts",
+    "prisma:migrate": "prisma migrate dev --config=./src/modules/prisma/prisma.config.ts",
+    "prisma:deploy": "prisma migrate deploy --config=./src/modules/prisma/prisma.config.ts",
+    "prisma:studio": "prisma studio --config=./src/modules/prisma/prisma.config.ts"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
     "@nestjs/core": "11.1.18",
     "@nestjs/platform-express": "^11.0.1",
+    "@prisma/adapter-pg": "^7.8.0",
+    "@prisma/client": "^7.8.0",
+    "@types/pg": "^8.20.0",
+    "class-validator": "^0.15.1",
+    "dotenv": "^17.4.2",
+    "pg": "^8.21.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1"
   },
@@ -36,6 +47,7 @@
     "globals": "^17.0.0",
     "jest": "^30.0.0",
     "prettier": "^3.4.2",
+    "prisma": "^7.8.0",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
     "ts-jest": "^29.2.5",
