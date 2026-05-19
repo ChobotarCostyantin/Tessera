@@ -222,7 +222,7 @@ export function PublishModal({
                     </div>
 
                     {/* Body */}
-                    <div className="flex flex-1 overflow-hidden">
+                    <div className="flex flex-1 overflow-hidden justify-center">
                         {tab === 'form' ? (
                             <FormPanel
                                 title={title}
@@ -239,8 +239,9 @@ export function PublishModal({
                         ) : (
                             <div className="flex-1 overflow-auto p-4">
                                 <PortfolioPreview
-                                    widgets={widgets}
-                                    layouts={layouts}
+                                    initialWidgets={widgets}
+                                    initialLayouts={layouts}
+                                    portfolioId={portfolioId}
                                 />
                             </div>
                         )}
@@ -281,7 +282,7 @@ function FormPanel({
     return (
         <div
             className="flex flex-col justify-between w-full p-8 gap-6"
-            style={{ maxWidth: 480 }}
+            style={{ maxWidth: 500 }}
         >
             <div className="flex flex-col gap-5">
                 <p

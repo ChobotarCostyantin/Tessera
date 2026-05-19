@@ -1,49 +1,81 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Widget, WidgetLayout } from '@/types/widget';
-import { CELL_PX, GAP_PX, CANVAS_W, gridToPx } from '@/lib/widgetConfig';
+import {CELL_PX, GAP_PX, CANVAS_W, gridToPx, getWidgetContainerStyle} from '@/lib/widgetConfig';
+import '@/styles/widget-hover-animation.css'
 import { WidgetRenderer } from './WidgetRenderer';
+import { getPortfolio } from '@/lib/api/portfolios';
 
 interface PortfolioPreviewProps {
-    widgets: Widget[];
-    layouts: WidgetLayout[];
+    initialWidgets: Widget[];
+    initialLayouts: WidgetLayout[];
+    portfolioId: string | null;
 }
 
-/**
- * Read-only live render of the current page config.
- * Used inside PublishModal preview tab.
- * Scales down to fit the modal.
- */
-export function PortfolioPreview({ widgets, layouts }: PortfolioPreviewProps) {
+export function PortfolioPreview({
+                                     initialWidgets,
+                                     initialLayouts,
+                                     portfolioId
+                                 }: PortfolioPreviewProps) {
+    const [widgets, setWidgets] = useState<Widget[]>(initialWidgets);
+    const [layouts, setLayouts] = useState<WidgetLayout[]>(initialLayouts);
+    const [isLoading, setIsLoading] = useState(false);
+
+    // Робимо запит в БД, якщо є portfolioId
+    useEffect(() => {
+        if (portfolioId) {
+            setIsLoading(true);
+            getPortfolio(portfolioId)
+                .then((data) => {
+                    const config = data.pageConfig as any;
+                    if (config?.widgets && config?.layouts) {
+                        setWidgets(config.widgets);
+                        setLayouts(config.layouts);
+                    }
+                })
+                .catch((err) => console.error('Failed to load portfolio config:', err))
+                .finally(() => setIsLoading(false));
+        } else {
+            // Фолбек для першої публікації (коли ще немає запису в БД)
+            setWidgets(initialWidgets);
+            setLayouts(initialLayouts);
+        }
+    }, [portfolioId, initialWidgets, initialLayouts]);
+
     const maxRow = Math.max(10, ...layouts.map((l) => l.y + l.h));
     const canvasH = maxRow * (CELL_PX + GAP_PX) - GAP_PX;
 
-    // Scale to fit modal preview area (modal body ~56vw, we use 90% of that)
-    const PREVIEW_MAX_W = 700;
+    // Scale to fit modal preview area
+    const PREVIEW_MAX_W = 1000;
     const scale = Math.min(1, PREVIEW_MAX_W / CANVAS_W);
 
     return (
         <div className="flex flex-col items-center">
             <p
-                className="text-[10px] font-semibold uppercase tracking-widest mb-4"
+                className="text-[10px] font-semibold uppercase tracking-widest mb-4 flex items-center gap-2"
                 style={{ color: 'var(--t-muted)' }}
             >
                 Live Preview
+                {isLoading && (
+                    <span className="w-3 h-3 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'var(--t-muted)', borderTopColor: 'var(--t-accent)' }} />
+                )}
             </p>
 
             <div
                 style={{
-                    width: CANVAS_W * scale,
-                    height: canvasH * scale,
+                    width: CANVAS_W * scale + 10,
+                    height: canvasH * scale + 10,
                     overflow: 'hidden',
-                    borderRadius: 12,
                     border: '0.5px solid var(--t-border)',
                     background: 'var(--t-bg)',
                     position: 'relative',
+                    opacity: isLoading ? 0.5 : 1,
+                    transition: 'opacity 0.2s ease',
+                    padding: '5px',
+                    boxSizing: 'border-box',
                 }}
             >
-                {/* Scaled canvas */}
                 <div
                     style={{
                         width: CANVAS_W,
@@ -57,25 +89,17 @@ export function PortfolioPreview({ widgets, layouts }: PortfolioPreviewProps) {
                         const layout = layouts.find((l) => l.id === widget.id);
                         if (!layout) return null;
 
-                        const ap = widget.appearance;
-                        const x = layout.x * (CELL_PX + GAP_PX);
-                        const y = layout.y * (CELL_PX + GAP_PX);
+                        const { className, style } = getWidgetContainerStyle(widget, layout);
 
                         return (
                             <div
                                 key={widget.id}
+                                className={className}
                                 style={{
+                                    ...style,
                                     position: 'absolute',
-                                    left: x,
-                                    top: y,
-                                    width: gridToPx(layout.w),
-                                    height: gridToPx(layout.h),
-                                    background:
-                                        ap?.bgColor ?? 'var(--t-surface)',
-                                    borderRadius: ap?.borderRadius ?? 14,
-                                    padding: 16,
-                                    overflow: 'hidden',
-                                    border: '0.5px solid var(--t-border)',
+                                    left: layout.x * (CELL_PX + GAP_PX),
+                                    top: layout.y * (CELL_PX + GAP_PX),
                                 }}
                             >
                                 <WidgetRenderer widget={widget} />
@@ -85,11 +109,8 @@ export function PortfolioPreview({ widgets, layouts }: PortfolioPreviewProps) {
                 </div>
             </div>
 
-            {widgets.length === 0 && (
-                <p
-                    className="text-[12px] mt-6"
-                    style={{ color: 'var(--t-muted)' }}
-                >
+            {widgets.length === 0 && !isLoading && (
+                <p className="text-[12px] mt-6" style={{ color: 'var(--t-muted)' }}>
                     No widgets yet — add some from the sidebar.
                 </p>
             )}

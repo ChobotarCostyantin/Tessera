@@ -1,10 +1,11 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
+import '@/styles/widget-hover-animation.css';
 import { getPublicPortfolio } from '@/lib/api/portfolios';
 import { PublicPortfolio } from '@/lib/schemas/portfolio';
 import { Widget, WidgetLayout } from '@/types/widget';
-import { CELL_PX, GAP_PX, CANVAS_W, gridToPx } from '@/lib/widgetConfig';
+import {CELL_PX, GAP_PX, CANVAS_W, getWidgetContainerStyle} from '@/lib/widgetConfig';
 import { WidgetRenderer } from '@/app/editor/_components/WidgetRenderer';
 
 interface PageConfig {
@@ -20,8 +21,8 @@ function parseConfig(raw: Record<string, unknown>): PageConfig {
 }
 
 export default function PublicPortfolioPage({
-    params,
-}: {
+                                                params,
+                                            }: {
     params: Promise<{ slug: string }>;
 }) {
     const [portfolio, setPortfolio] = useState<PublicPortfolio | null>(null);
@@ -128,7 +129,12 @@ export default function PublicPortfolioPage({
             {/* Bento canvas */}
             <div
                 className="relative mx-auto overflow-x-auto"
-                style={{ width: '100%', maxWidth: CANVAS_W }}
+                style={{
+                    width: '100%',
+                    maxWidth: CANVAS_W + 10,
+                    padding: '5px',
+                    boxSizing: 'border-box',
+                }}
             >
                 <div
                     style={{
@@ -138,38 +144,27 @@ export default function PublicPortfolioPage({
                         margin: '0 auto',
                     }}
                 >
-                    {widgets.map((widget) => {
+                    {widgets.map((widget, index) => {
                         const layout = layouts.find((l) => l.id === widget.id);
                         if (!layout) return null;
 
-                        const ap = widget.appearance;
-                        const x = layout.x * (CELL_PX + GAP_PX);
-                        const y = layout.y * (CELL_PX + GAP_PX);
+                        // Беремо універсальні стилі
+                        const { className, style } = getWidgetContainerStyle(widget, layout);
 
                         return (
                             <div
                                 key={widget.id}
+                                className={className}
                                 style={{
+                                    ...style,
                                     position: 'absolute',
-                                    left: x,
-                                    top: y,
-                                    width: gridToPx(layout.w),
-                                    height: gridToPx(layout.h),
-                                    background:
-                                        ap?.bgColor ?? 'var(--t-surface)',
-                                    borderRadius: ap?.borderRadius ?? 14,
-                                    padding: 16,
-                                    overflow: 'hidden',
-                                    border: '0.5px solid var(--t-border)',
-                                    transition:
-                                        'transform 0.2s ease, box-shadow 0.2s ease',
+                                    left: layout.x * (CELL_PX + GAP_PX),
+                                    top: layout.y * (CELL_PX + GAP_PX),
+
+                                    animation: 'widgetEntry 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                                    animationDelay: `${index * 50}ms`,
+                                    animationFillMode: 'backwards',
                                 }}
-                                className={
-                                    ap?.hoverAnimation &&
-                                    ap.hoverAnimation !== 'none'
-                                        ? `widget-hover-${ap.hoverAnimation}`
-                                        : ''
-                                }
                             >
                                 <WidgetRenderer widget={widget} />
                             </div>
@@ -196,9 +191,9 @@ export default function PublicPortfolioPage({
 // ── Shell layout ──────────────────────────────────────────────────────────────
 
 function Shell({
-    children,
-    title,
-}: {
+                   children,
+                   title,
+               }: {
     children: React.ReactNode;
     title?: string;
 }) {
@@ -274,9 +269,18 @@ function Shell({
                 </a>
             </footer>
 
-            {/* Import hover animation styles */}
+            {/* Добавили keyframes для анимации появления виджетов */}
             <style>{`
-                @import url('/styles/widget-hover-animation.css');
+                @keyframes widgetEntry {
+                    0% {
+                        opacity: 0;
+                        transform: scale(0.95) translateY(20px);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: scale(1) translateY(0);
+                    }
+                }
             `}</style>
         </div>
     );

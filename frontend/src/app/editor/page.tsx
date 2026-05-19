@@ -100,11 +100,10 @@ export default function EditorPage() {
 
     const config: PageConfig = { widgets, layouts };
 
-    // Autosave to backend (only when portfolioId exists = published once)
     useAutosave({
         portfolioId,
         config,
-        debounceMs: 3000,
+        debounceMs: 1000,
         onStatusChange: setAutosaveStatus,
     });
 

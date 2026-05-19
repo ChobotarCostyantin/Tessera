@@ -14,16 +14,18 @@ interface UseAutosaveOptions {
 }
 
 export function useAutosave({
-    portfolioId,
-    config,
-    debounceMs = 3000,
-    onStatusChange,
-}: UseAutosaveOptions) {
+                                portfolioId,
+                                config,
+                                debounceMs = 3000,
+                                onStatusChange,
+                            }: UseAutosaveOptions) {
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-    const latestConfigRef = useRef(config);
-    const isFirstRender = useRef(true);
 
-    latestConfigRef.current = config;
+    const latestConfigRef = useRef(config);
+
+    const lastSavedConfigRef = useRef(JSON.stringify(config));
+
+    const isFirstRender = useRef(true);
 
     const notify = useCallback(
         (status: AutosaveStatus) => onStatusChange?.(status),
@@ -31,20 +33,34 @@ export function useAutosave({
     );
 
     useEffect(() => {
-        // Skip autosave on first render (no changes yet)
+        if (!portfolioId) return;
+
+        const serializedConfig = JSON.stringify(config);
+
+        // пропускаємо перший render
         if (isFirstRender.current) {
             isFirstRender.current = false;
+            lastSavedConfigRef.current = serializedConfig;
             return;
         }
 
-        if (!portfolioId) return;
+        // якщо дані не змінились — нічого не робимо
+        if (serializedConfig === lastSavedConfigRef.current) {
+            return;
+        }
+
+        latestConfigRef.current = config;
 
         notify('pending');
 
-        if (timerRef.current) clearTimeout(timerRef.current);
+        // reset debounce timer
+        if (timerRef.current) {
+            clearTimeout(timerRef.current);
+        }
 
         timerRef.current = setTimeout(async () => {
             notify('saving');
+
             try {
                 await updateConfig(portfolioId, {
                     pageConfig: latestConfigRef.current as unknown as Record<
@@ -52,8 +68,13 @@ export function useAutosave({
                         unknown
                     >,
                 });
+
+                lastSavedConfigRef.current = JSON.stringify(
+                    latestConfigRef.current,
+                );
+
                 notify('saved');
-                // Reset to idle after 2s
+
                 setTimeout(() => notify('idle'), 2000);
             } catch {
                 notify('error');
@@ -61,9 +82,9 @@ export function useAutosave({
         }, debounceMs);
 
         return () => {
-            if (timerRef.current) clearTimeout(timerRef.current);
+            if (timerRef.current) {
+                clearTimeout(timerRef.current);
+            }
         };
-        // config changes trigger the debounce
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [config, portfolioId, debounceMs]);
+    }, [config, portfolioId, debounceMs, notify]);
 }
