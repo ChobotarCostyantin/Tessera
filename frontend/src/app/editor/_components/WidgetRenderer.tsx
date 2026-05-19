@@ -34,6 +34,12 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
         case 'experience':
             return (
                 <div className="flex flex-col h-full overflow-y-auto custom-scrollbar gap-3">
+                    <p
+                        className="text-[10px] font-semibold uppercase tracking-widest mb-2 shrink-0"
+                        style={{ color: 'var(--t-muted)' }}
+                    >
+                        Experience
+                    </p>
                     {widget.items?.map((item, i) => (
                         <div
                             key={i}

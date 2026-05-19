@@ -1,6 +1,8 @@
+import 'dotenv/config';
 import { Injectable, OnModuleInit, OnModuleDestroy } from '@nestjs/common';
 import { PrismaClient } from './generated/prisma/client';
 import { PrismaPg } from '@prisma/adapter-pg';
+import { Pool } from 'pg';
 
 @Injectable()
 export class PrismaService
@@ -8,9 +10,17 @@ export class PrismaService
     implements OnModuleInit, OnModuleDestroy
 {
     constructor() {
-        const adapter = new PrismaPg({
-            connectionString: process.env.DATABASE_URL,
-        });
+        const connectionString = process.env.DATABASE_URL;
+
+        if (!connectionString) {
+            throw new Error(
+                'ERROR: DATABASE_URL not found in local environment!',
+            );
+        }
+
+        const pool = new Pool({ connectionString });
+        const adapter = new PrismaPg(pool);
+
         super({ adapter });
     }
 

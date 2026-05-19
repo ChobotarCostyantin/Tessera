@@ -1,5 +1,11 @@
 import { Prisma } from '@prisma/client';
-import { IsString, IsNotEmpty, Matches, IsObject, IsOptional } from 'class-validator';
+import {
+    IsString,
+    IsNotEmpty,
+    Matches,
+    IsObject,
+    IsOptional,
+} from 'class-validator';
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 

@@ -10,7 +10,7 @@ async function bootstrap() {
         allowedHeaders: ['Content-Type', 'x-owner-token'],
     });
 
-    app.setGlobalPrefix('api');
+    app.setGlobalPrefix('api/v1');
 
     await app.listen(process.env.PORT ?? 3010);
 }

@@ -16,8 +16,8 @@ import {
     UpdateConfigDto,
     PublishPortfolioDto,
 } from '@/modules/portfolios/dto/portfolio.dto';
-import {OwnerToken} from "@/common/decorators/owner-token.decorator";
-import {OwnerGuard} from "@/common/guards/owner.guard";
+import { OwnerToken } from '@/common/decorators/owner-token.decorator';
+import { OwnerGuard } from '@/common/guards/owner.guard';
 
 @Controller('portfolios')
 @UseGuards(OwnerGuard)
@@ -34,19 +34,13 @@ export class PortfoliosController {
 
     /** Get single portfolios (full data incl. pageConfig) */
     @Get(':id')
-    findOne(
-        @Param('id') id: string,
-        @OwnerToken() ownerToken: string,
-    ) {
+    findOne(@Param('id') id: string, @OwnerToken() ownerToken: string) {
         return this.portfoliosService.findOneByOwner(id, ownerToken);
     }
 
     /** Create portfolios draft on first publish */
     @Post()
-    create(
-        @Body() dto: CreatePortfolioDto,
-        @OwnerToken() ownerToken: string,
-    ) {
+    create(@Body() dto: CreatePortfolioDto, @OwnerToken() ownerToken: string) {
         return this.portfoliosService.create(dto, ownerToken);
     }
 
@@ -73,20 +67,14 @@ export class PortfoliosController {
     /** Unpublish */
     @Patch(':id/unpublish')
     @HttpCode(HttpStatus.OK)
-    unpublish(
-        @Param('id') id: string,
-        @OwnerToken() ownerToken: string,
-    ) {
+    unpublish(@Param('id') id: string, @OwnerToken() ownerToken: string) {
         return this.portfoliosService.unpublish(id, ownerToken);
     }
 
     /** Delete */
     @Delete(':id')
     @HttpCode(HttpStatus.NO_CONTENT)
-    remove(
-        @Param('id') id: string,
-        @OwnerToken() ownerToken: string,
-    ) {
+    remove(@Param('id') id: string, @OwnerToken() ownerToken: string) {
         return this.portfoliosService.remove(id, ownerToken);
     }
 }
