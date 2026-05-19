@@ -15,7 +15,7 @@ import {
     CreatePortfolioDto,
     UpdateConfigDto,
     PublishPortfolioDto,
-} from './Dto/portfolio.dto';
+} from '@/modules/portfolios/dto/portfolio.dto';
 import {OwnerToken} from "@/common/decorators/owner-token.decorator";
 import {OwnerGuard} from "@/common/guards/owner.guard";
 

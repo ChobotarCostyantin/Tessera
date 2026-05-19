@@ -4,12 +4,12 @@ import {
     ConflictException,
     ForbiddenException,
 } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service.js';
+import { PrismaService } from '../prisma/prisma.service';
 import {
     CreatePortfolioDto,
     UpdateConfigDto,
     PublishPortfolioDto,
-} from './Dto/portfolio.dto';
+} from '@/modules/portfolios/dto/portfolio.dto';
 
 @Injectable()
 export class PortfoliosService {
