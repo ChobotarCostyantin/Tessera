@@ -63,19 +63,15 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
                     >
                         Links
                     </p>
-                    <div className="flex flex-col gap-1.5 overflow-hidden">
+                    <div className="flex flex-col gap-2 overflow-y-auto custom-scrollbar">
                         {widget.links.map((link, i) => (
                             <a
                                 key={i}
                                 href={link.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="flex items-center gap-2 px-2.5 py-2 rounded-xl text-[12px] font-medium transition-colors shrink-0"
-                                style={{
-                                    background: 'var(--t-surface2)',
-                                    color: 'var(--t-text)',
-                                    border: '0.5px solid var(--t-border)',
-                                }}
+                                className="flex items-center gap-2 text-[13px] hover:underline hover:opacity-80 transition-all shrink-0 py-1"
+                                style={{ color: 'var(--t-text)' }}
                                 onClick={(e) => e.stopPropagation()}
                             >
                                 {link.label}

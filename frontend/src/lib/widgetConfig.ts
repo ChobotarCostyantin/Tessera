@@ -127,7 +127,6 @@ export function getWidgetContainerStyle(widget: Widget, layout: WidgetLayout) {
         // візуал — точно як innerStyle WidgetCell у звичайному стані
         background: bgColor,
         border: '1.5px solid transparent',
-        boxShadow: 'none',
         borderRadius,
         padding: '16px',
         overflow: 'hidden',
