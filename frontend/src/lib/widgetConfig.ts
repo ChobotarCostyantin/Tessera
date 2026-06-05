@@ -1,5 +1,5 @@
 import { Widget, WidgetLayout } from '@/types/widget';
-import React from "react";
+import React from 'react';
 
 export const GRID_COLS = 40;
 export const CELL_PX = 30;

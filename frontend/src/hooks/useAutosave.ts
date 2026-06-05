@@ -14,11 +14,11 @@ interface UseAutosaveOptions {
 }
 
 export function useAutosave({
-                                portfolioId,
-                                config,
-                                debounceMs = 3000,
-                                onStatusChange,
-                            }: UseAutosaveOptions) {
+    portfolioId,
+    config,
+    debounceMs = 3000,
+    onStatusChange,
+}: UseAutosaveOptions) {
     const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
     const latestConfigRef = useRef(config);

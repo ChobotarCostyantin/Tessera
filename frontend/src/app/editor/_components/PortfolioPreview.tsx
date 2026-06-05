@@ -2,8 +2,14 @@
 
 import React, { useEffect, useState } from 'react';
 import { Widget, WidgetLayout } from '@/types/widget';
-import {CELL_PX, GAP_PX, CANVAS_W, gridToPx, getWidgetContainerStyle} from '@/lib/widgetConfig';
-import '@/styles/widget-hover-animation.css'
+import {
+    CELL_PX,
+    GAP_PX,
+    CANVAS_W,
+    gridToPx,
+    getWidgetContainerStyle,
+} from '@/lib/widgetConfig';
+import '@/styles/widget-hover-animation.css';
 import { WidgetRenderer } from './WidgetRenderer';
 import { getPortfolio } from '@/lib/api/portfolios';
 
@@ -14,10 +20,10 @@ interface PortfolioPreviewProps {
 }
 
 export function PortfolioPreview({
-                                     initialWidgets,
-                                     initialLayouts,
-                                     portfolioId
-                                 }: PortfolioPreviewProps) {
+    initialWidgets,
+    initialLayouts,
+    portfolioId,
+}: PortfolioPreviewProps) {
     const [widgets, setWidgets] = useState<Widget[]>(initialWidgets);
     const [layouts, setLayouts] = useState<WidgetLayout[]>(initialLayouts);
     const [isLoading, setIsLoading] = useState(false);
@@ -34,7 +40,9 @@ export function PortfolioPreview({
                         setLayouts(config.layouts);
                     }
                 })
-                .catch((err) => console.error('Failed to load portfolio config:', err))
+                .catch((err) =>
+                    console.error('Failed to load portfolio config:', err),
+                )
                 .finally(() => setIsLoading(false));
         } else {
             // Фолбек для першої публікації (коли ще немає запису в БД)
@@ -58,7 +66,13 @@ export function PortfolioPreview({
             >
                 Live Preview
                 {isLoading && (
-                    <span className="w-3 h-3 rounded-full border-2 border-t-transparent animate-spin" style={{ borderColor: 'var(--t-muted)', borderTopColor: 'var(--t-accent)' }} />
+                    <span
+                        className="w-3 h-3 rounded-full border-2 border-t-transparent animate-spin"
+                        style={{
+                            borderColor: 'var(--t-muted)',
+                            borderTopColor: 'var(--t-accent)',
+                        }}
+                    />
                 )}
             </p>
 
@@ -89,7 +103,10 @@ export function PortfolioPreview({
                         const layout = layouts.find((l) => l.id === widget.id);
                         if (!layout) return null;
 
-                        const { className, style } = getWidgetContainerStyle(widget, layout);
+                        const { className, style } = getWidgetContainerStyle(
+                            widget,
+                            layout,
+                        );
 
                         return (
                             <div
@@ -110,7 +127,10 @@ export function PortfolioPreview({
             </div>
 
             {widgets.length === 0 && !isLoading && (
-                <p className="text-[12px] mt-6" style={{ color: 'var(--t-muted)' }}>
+                <p
+                    className="text-[12px] mt-6"
+                    style={{ color: 'var(--t-muted)' }}
+                >
                     No widgets yet — add some from the sidebar.
                 </p>
             )}

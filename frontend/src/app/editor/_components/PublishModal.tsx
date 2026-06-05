@@ -1,7 +1,11 @@
 'use client';
 
 import React, { useState, useCallback, useEffect } from 'react';
-import { createPortfolio, publishPortfolio } from '@/lib/api/portfolios';
+import {
+    createPortfolio,
+    publishPortfolio,
+    unpublishPortfolio,
+} from '@/lib/api/portfolios';
 import { PublishPortfolioSchema } from '@/lib/schemas/portfolio';
 import { Widget, WidgetLayout, PageConfig } from '@/types/widget';
 import { PortfolioPreview } from './PortfolioPreview';
@@ -11,9 +15,10 @@ interface PublishModalProps {
     onClose: () => void;
     widgets: Widget[];
     layouts: WidgetLayout[];
-    /** If portfolio already exists in DB, pass its id to skip create */
     portfolioId: string | null;
+    isPublished: boolean;
     onPublished: (portfolioId: string, slug: string) => void;
+    onUnpublished: () => void;
 }
 
 type FormErrors = Partial<Record<'slug' | 'title', string>>;
@@ -24,7 +29,9 @@ export function PublishModal({
     widgets,
     layouts,
     portfolioId,
+    isPublished,
     onPublished,
+    onUnpublished,
 }: PublishModalProps) {
     const [title, setTitle] = useState('');
     const [slug, setSlug] = useState('');
@@ -108,6 +115,23 @@ export function PublishModal({
             setLoading(false);
         }
     }, [title, slug, widgets, layouts, portfolioId, onPublished, onClose]);
+
+    const handleUnpublish = useCallback(async () => {
+        if (!portfolioId) return;
+        setLoading(true);
+        setApiError('');
+        try {
+            await unpublishPortfolio(portfolioId);
+            onUnpublished();
+            onClose();
+        } catch (err: unknown) {
+            setApiError(
+                err instanceof Error ? err.message : 'Something went wrong',
+            );
+        } finally {
+            setLoading(false);
+        }
+    }, [portfolioId, onUnpublished, onClose]);
 
     // Close on Escape
     useEffect(() => {
@@ -235,6 +259,8 @@ export function PublishModal({
                                 onSlugChange={setSlug}
                                 onPublish={handlePublish}
                                 onClose={onClose}
+                                isPublished={isPublished}
+                                onUnpublish={handleUnpublish}
                             />
                         ) : (
                             <div className="flex-1 overflow-auto p-4">
@@ -265,6 +291,8 @@ interface FormPanelProps {
     onSlugChange: (v: string) => void;
     onPublish: () => void;
     onClose: () => void;
+    isPublished: boolean;
+    onUnpublish: () => void;
 }
 
 function FormPanel({
@@ -278,6 +306,8 @@ function FormPanel({
     onSlugChange,
     onPublish,
     onClose,
+    isPublished,
+    onUnpublish,
 }: FormPanelProps) {
     return (
         <div
@@ -395,6 +425,25 @@ function FormPanel({
                 >
                     Cancel
                 </button>
+
+                {isPublished && (
+                    <button
+                        onClick={onUnpublish}
+                        disabled={loading}
+                        className="flex-1 py-2.5 rounded-xl text-[13px] font-semibold transition-all"
+                        style={{
+                            background: 'rgba(255,80,80,0.12)',
+                            border: '0.5px solid rgba(255,80,80,0.3)',
+                            color: 'rgba(255,120,120,0.9)',
+                            cursor: loading ? 'not-allowed' : 'pointer',
+                            fontFamily: 'inherit',
+                            opacity: loading ? 0.7 : 1,
+                        }}
+                    >
+                        {loading ? 'Unpublishing...' : '🔒 Unpublish'}
+                    </button>
+                )}
+
                 <button
                     onClick={onPublish}
                     disabled={loading}

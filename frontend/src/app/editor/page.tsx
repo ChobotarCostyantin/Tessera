@@ -79,7 +79,8 @@ export default function EditorPage() {
     const [selectedId, setSelectedId] = useState<string | null>(null);
     const [publishModalOpen, setPublishModalOpen] = useState(false);
     const [portfolioId, setPortfolioId] = useState<string | null>(null);
-    const [portfolioSlug, setPortfolioSlug] = useState<string | null>(null); // Додали стан для slug
+    const [portfolioSlug, setPortfolioSlug] = useState<string | null>(null);
+    const [isPublished, setIsPublished] = useState(false);
     const [autosaveStatus, setAutosaveStatus] =
         useState<AutosaveStatus>('idle');
     const toast = useToast();
@@ -87,9 +88,13 @@ export default function EditorPage() {
     useEffect(() => {
         setIsMounted(true);
         const savedId = localStorage.getItem(PORTFOLIO_ID_KEY);
-        const savedSlug = localStorage.getItem(PORTFOLIO_SLUG_KEY); // Дістаємо slug з LocalStorage
+        const savedSlug = localStorage.getItem(PORTFOLIO_SLUG_KEY);
+        const savedPublished = localStorage.getItem(
+            'tessera:portfolio-published',
+        );
         if (savedId) setPortfolioId(savedId);
         if (savedSlug) setPortfolioSlug(savedSlug);
+        if (savedPublished === 'true') setIsPublished(true);
     }, []);
 
     // Persist config locally on every change
@@ -168,13 +173,21 @@ export default function EditorPage() {
     const handlePublished = useCallback(
         (id: string, slug: string) => {
             setPortfolioId(id);
-            setPortfolioSlug(slug); // Зберігаємо slug у стан
+            setPortfolioSlug(slug);
+            setIsPublished(true);
             localStorage.setItem(PORTFOLIO_ID_KEY, id);
-            localStorage.setItem(PORTFOLIO_SLUG_KEY, slug); // Зберігаємо slug у LocalStorage
+            localStorage.setItem(PORTFOLIO_SLUG_KEY, slug);
+            localStorage.setItem('tessera:portfolio-published', 'true');
             toast.show(`✓ Published at /p/${slug}`);
         },
         [toast],
     );
+
+    const handleUnpublished = useCallback(() => {
+        setIsPublished(false);
+        localStorage.setItem('tessera:portfolio-published', 'false');
+        toast.show('🔒 Unpublished');
+    }, [toast]);
 
     const handleExport = useCallback(() => {
         const config: PageConfig = { widgets, layouts };
@@ -295,7 +308,11 @@ export default function EditorPage() {
                         }}
                         onClick={() => setPublishModalOpen(true)}
                     >
-                        {portfolioId ? '⟳ Re-publish' : 'Publish'}
+                        {portfolioId
+                            ? isPublished
+                                ? '⟳ Re-publish'
+                                : '🚀 Publish'
+                            : 'Publish'}
                     </button>
                 </div>
             </header>
@@ -326,7 +343,9 @@ export default function EditorPage() {
                 widgets={widgets}
                 layouts={layouts}
                 portfolioId={portfolioId}
+                isPublished={isPublished}
                 onPublished={handlePublished}
+                onUnpublished={handleUnpublished}
             />
 
             {/* ── Toast ──────────────────────────────────────────────────── */}

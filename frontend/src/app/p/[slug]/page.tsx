@@ -5,7 +5,12 @@ import '@/styles/widget-hover-animation.css';
 import { getPublicPortfolio } from '@/lib/api/portfolios';
 import { PublicPortfolio } from '@/lib/schemas/portfolio';
 import { Widget, WidgetLayout } from '@/types/widget';
-import { CELL_PX, GAP_PX, CANVAS_W, getWidgetContainerStyle } from '@/lib/widgetConfig';
+import {
+    CELL_PX,
+    GAP_PX,
+    CANVAS_W,
+    getWidgetContainerStyle,
+} from '@/lib/widgetConfig';
 import { WidgetRenderer } from '@/app/editor/_components/WidgetRenderer';
 
 interface PageConfig {
@@ -42,8 +47,8 @@ function useCanvasScale(canvasNativeWidth: number) {
 }
 
 export default function PublicPortfolioPage({
-                                                params,
-                                            }: {
+    params,
+}: {
     params: Promise<{ slug: string }>;
 }) {
     const [portfolio, setPortfolio] = useState<PublicPortfolio | null>(null);
@@ -75,7 +80,10 @@ export default function PublicPortfolioPage({
                                 borderTopColor: 'var(--t-accent)',
                             }}
                         />
-                        <p className="text-[12px]" style={{ color: 'var(--t-muted)' }}>
+                        <p
+                            className="text-[12px]"
+                            style={{ color: 'var(--t-muted)' }}
+                        >
                             Loading portfolio…
                         </p>
                     </div>
@@ -90,11 +98,22 @@ export default function PublicPortfolioPage({
             <Shell>
                 <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center">
                     <span className="text-5xl">🌫</span>
-                    <h1 className="text-[22px] font-semibold" style={{ color: 'var(--t-text)' }}>
+                    <h1
+                        className="text-[22px] font-semibold"
+                        style={{ color: 'var(--t-text)' }}
+                    >
                         Portfolio not found
                     </h1>
-                    <p className="text-[13px]" style={{ color: 'var(--t-muted)' }}>
-                        <span style={{ color: 'var(--t-accent)', fontFamily: 'monospace' }}>
+                    <p
+                        className="text-[13px]"
+                        style={{ color: 'var(--t-muted)' }}
+                    >
+                        <span
+                            style={{
+                                color: 'var(--t-accent)',
+                                fontFamily: 'monospace',
+                            }}
+                        >
                             /p/{slug}
                         </span>{' '}
                         doesn&apos;t exist or isn&apos;t published yet.
@@ -110,10 +129,16 @@ export default function PublicPortfolioPage({
             <Shell>
                 <div className="flex flex-col items-center justify-center min-h-[60vh] gap-3 text-center">
                     <span className="text-5xl">⚡</span>
-                    <h1 className="text-[18px] font-semibold" style={{ color: 'var(--t-text)' }}>
+                    <h1
+                        className="text-[18px] font-semibold"
+                        style={{ color: 'var(--t-text)' }}
+                    >
                         Something went wrong
                     </h1>
-                    <p className="text-[13px]" style={{ color: 'var(--t-muted)' }}>
+                    <p
+                        className="text-[13px]"
+                        style={{ color: 'var(--t-muted)' }}
+                    >
                         Failed to load the portfolio. Try refreshing.
                     </p>
                 </div>
@@ -130,7 +155,10 @@ export default function PublicPortfolioPage({
             {widgets.length === 0 && (
                 <div className="flex flex-col items-center justify-center py-24 gap-3 opacity-50">
                     <span className="text-4xl">🌱</span>
-                    <p className="text-[13px]" style={{ color: 'var(--t-muted)' }}>
+                    <p
+                        className="text-[13px]"
+                        style={{ color: 'var(--t-muted)' }}
+                    >
                         This portfolio is empty.
                     </p>
                 </div>
@@ -143,7 +171,13 @@ export default function PublicPortfolioPage({
 // Renders the bento grid scaled down to fit any viewport width.
 // Uses ResizeObserver so it reacts to orientation changes too.
 
-function ScaledCanvas({ widgets, layouts }: { widgets: Widget[]; layouts: WidgetLayout[] }) {
+function ScaledCanvas({
+    widgets,
+    layouts,
+}: {
+    widgets: Widget[];
+    layouts: WidgetLayout[];
+}) {
     const { containerRef, scale } = useCanvasScale(CANVAS_W);
 
     const maxRow = Math.max(10, ...layouts.map((l) => l.y + l.h));
@@ -180,7 +214,10 @@ function ScaledCanvas({ widgets, layouts }: { widgets: Widget[]; layouts: Widget
                         const layout = layouts.find((l) => l.id === widget.id);
                         if (!layout) return null;
 
-                        const { className, style } = getWidgetContainerStyle(widget, layout);
+                        const { className, style } = getWidgetContainerStyle(
+                            widget,
+                            layout,
+                        );
 
                         return (
                             <div
@@ -191,7 +228,8 @@ function ScaledCanvas({ widgets, layouts }: { widgets: Widget[]; layouts: Widget
                                     position: 'absolute',
                                     left: layout.x * (CELL_PX + GAP_PX),
                                     top: layout.y * (CELL_PX + GAP_PX),
-                                    animation: 'widgetEntry 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
+                                    animation:
+                                        'widgetEntry 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards',
                                     animationDelay: `${index * 50}ms`,
                                     animationFillMode: 'backwards',
                                 }}
@@ -208,7 +246,13 @@ function ScaledCanvas({ widgets, layouts }: { widgets: Widget[]; layouts: Widget
 
 // ── Shell layout ──────────────────────────────────────────────────────────────
 
-function Shell({ children, title }: { children: React.ReactNode; title?: string }) {
+function Shell({
+    children,
+    title,
+}: {
+    children: React.ReactNode;
+    title?: string;
+}) {
     return (
         <div
             className="flex flex-col"
@@ -245,7 +289,10 @@ function Shell({ children, title }: { children: React.ReactNode; title?: string 
                 {title && (
                     <span
                         className="hidden sm:block text-[14px] truncate mx-4"
-                        style={{ color: 'var(--t-muted)', fontFamily: 'monospace' }}
+                        style={{
+                            color: 'var(--t-muted)',
+                            fontFamily: 'monospace',
+                        }}
                     >
                         {title}
                     </span>
@@ -277,13 +324,19 @@ function Shell({ children, title }: { children: React.ReactNode; title?: string 
                 </div>
             )}
 
-            <main className="flex-1 px-2 py-6 sm:px-4 sm:py-10">{children}</main>
+            <main className="flex-1 px-2 py-6 sm:px-4 sm:py-10">
+                {children}
+            </main>
 
             <footer className="mt-auto pt-10 pb-8 text-center">
                 <a
                     href="/"
                     className="text-[11px] font-medium"
-                    style={{ color: 'var(--t-muted)', textDecoration: 'none', opacity: 0.5 }}
+                    style={{
+                        color: 'var(--t-muted)',
+                        textDecoration: 'none',
+                        opacity: 0.5,
+                    }}
                 >
                     Built with Tessera
                 </a>
