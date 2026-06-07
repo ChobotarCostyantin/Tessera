@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { HexColorPicker } from 'react-colorful';
 import { Widget, WidgetAppearance } from '@/types/widget';
 import { RichTextEditor } from './RichTextEditor';
+import { PROGRESS_COLORS } from '@/lib/widgetConfig';
 
 interface InspectorProps {
     widget: Widget | null;
@@ -594,14 +595,16 @@ function ContentTab({
                         >
                             <div className="mb-2">
                                 <Label>Name</Label>
-                                <PlainInput
+                                <RichTextEditor
                                     value={link.label || ''}
                                     onChange={(v) => {
                                         const n = [...widget.links];
                                         n[idx].label = v;
                                         patch({ links: n });
                                     }}
-                                    placeholder="Наприклад: Instagram"
+                                    placeholder="e.g. Instagram"
+                                    minHeight={36}
+                                    singleLine
                                 />
                             </div>
                             <div>
@@ -635,7 +638,7 @@ function ContentTab({
                             patch({
                                 links: [
                                     ...(widget.links || []),
-                                    { label: 'New link', url: '#' },
+                                    { label: '<p>New link</p>', url: '#' },
                                 ],
                             })
                         }
@@ -683,7 +686,7 @@ function ContentTab({
                             />
                             <ColorField
                                 label="Color"
-                                value={item.color || '#a89bff'}
+                                value={PROGRESS_COLORS[item.color] || item.color || '#a89bff'}
                                 onChange={(c) => {
                                     const n = [...widget.items];
                                     n[idx].color = c;
@@ -710,7 +713,7 @@ function ContentTab({
                                 items: [
                                     ...(widget.items || []),
                                     {
-                                        label: 'New skill',
+                                        label: '<p>New skill</p>',
                                         progress: 50,
                                         color: '#a89bff',
                                     },

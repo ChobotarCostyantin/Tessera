@@ -189,14 +189,6 @@ export default function EditorPage() {
         toast.show('🔒 Unpublished');
     }, [toast]);
 
-    const handleExport = useCallback(() => {
-        const config: PageConfig = { widgets, layouts };
-        navigator.clipboard
-            .writeText(JSON.stringify(config, null, 2))
-            .then(() => toast.show('✓ JSON copied to clipboard'))
-            .catch(() => toast.show('Copy failed'));
-    }, [widgets, layouts, toast]);
-
     const selectedWidget = widgets.find((w) => w.id === selectedId) ?? null;
 
     if (!isMounted) {
@@ -250,33 +242,7 @@ export default function EditorPage() {
                 </div>
 
                 <div className="flex items-center gap-2">
-                    <button
-                        className="px-3.5 py-1.5 rounded-[10px] text-[12px] font-medium transition-all duration-150"
-                        style={{
-                            background: 'transparent',
-                            border: '0.5px solid var(--t-border)',
-                            color: 'var(--t-muted)',
-                            fontFamily: 'inherit',
-                            cursor: 'pointer',
-                        }}
-                        onClick={handleExport}
-                        onMouseEnter={(e) => {
-                            (e.currentTarget as HTMLElement).style.background =
-                                'var(--t-surface2)';
-                            (e.currentTarget as HTMLElement).style.color =
-                                'var(--t-text)';
-                        }}
-                        onMouseLeave={(e) => {
-                            (e.currentTarget as HTMLElement).style.background =
-                                'transparent';
-                            (e.currentTarget as HTMLElement).style.color =
-                                'var(--t-muted)';
-                        }}
-                    >
-                        Export JSON
-                    </button>
-
-                    {portfolioSlug && (
+                    {portfolioSlug && isPublished && (
                         <a
                             href={`/p/${portfolioSlug}`}
                             target="_blank"

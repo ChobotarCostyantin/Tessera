@@ -2,6 +2,7 @@
 
 import React from 'react';
 import { Widget } from '@/types/widget';
+import { PROGRESS_COLORS } from '@/lib/widgetConfig';
 
 function RichField({
     html,
@@ -74,7 +75,10 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
                                 style={{ color: 'var(--t-text)' }}
                                 onClick={(e) => e.stopPropagation()}
                             >
-                                {link.label}
+                                <RichField
+                                    html={link.label}
+                                    style={{ color: 'var(--t-text)' }}
+                                />
                             </a>
                         ))}
                     </div>
@@ -124,13 +128,7 @@ export function WidgetRenderer({ widget }: { widget: Widget }) {
                         Skills
                     </p>
                     {widget.items.map((item, i) => {
-                        const colorHex =
-                            {
-                                green: '#97c459',
-                                purple: '#a89bff',
-                                amber: '#ef9f27',
-                                blue: '#85b7eb',
-                            }[item.color] || item.color;
+                        const colorHex = PROGRESS_COLORS[item.color] || item.color;
 
                         return (
                             <div key={i} className="flex flex-col shrink-0">

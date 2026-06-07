@@ -60,6 +60,13 @@ export const WIDGET_CATALOG = [
     },
 ];
 
+export const PROGRESS_COLORS: Record<string, string> = {
+    green:  '#97c459',
+    purple: '#a89bff',
+    amber:  '#ef9f27',
+    blue:   '#85b7eb',
+};
+
 export function createDefaultWidget(type: Widget['type'], id: string): Widget {
     switch (type) {
         case 'experience':
@@ -77,7 +84,7 @@ export function createDefaultWidget(type: Widget['type'], id: string): Widget {
             return {
                 id,
                 type,
-                links: [{ label: 'GitHub', url: 'https://github.com' }],
+                links: [{ label: '<p>GitHub</p>', url: 'https://github.com' }],
             };
         case 'text':
             return {
