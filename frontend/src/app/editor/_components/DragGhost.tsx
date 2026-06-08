@@ -20,7 +20,6 @@ export function DragGhost({ widget }: { widget: Widget }) {
             }}
         >
             {isSidebarGhost ? (
-                // Sidebar ghost fallback — no WidgetRenderer, just icon + label
                 <div
                     className="w-full h-full flex flex-col items-center justify-center gap-2 opacity-50"
                     style={{ color: 'var(--t-text)' }}
@@ -40,7 +39,6 @@ export function DragGhost({ widget }: { widget: Widget }) {
                     )}
                 </div>
             ) : (
-                // Full ghost for existing grid widgets
                 <div className="w-full h-full opacity-40 grayscale">
                     <WidgetRenderer widget={widget} />
                 </div>

@@ -95,7 +95,6 @@ export function EditorLayout({
                 let hasCoords = false;
                 const actEvent = event.activatorEvent;
 
-                // Перевірка для TouchSensor (мобільні пристрої)
                 if (
                     'touches' in actEvent &&
                     (actEvent as TouchEvent).touches.length > 0
@@ -104,7 +103,6 @@ export function EditorLayout({
                     initialY = (actEvent as TouchEvent).touches[0].clientY;
                     hasCoords = true;
                 }
-                // Перевірка для MouseSensor (десктоп)
                 else if ('clientX' in actEvent && 'clientY' in actEvent) {
                     initialX = (actEvent as MouseEvent).clientX;
                     initialY = (actEvent as MouseEvent).clientY;
@@ -154,7 +152,6 @@ export function EditorLayout({
                 const origin = activatorCoordsRef.current;
                 if (!ghost || !origin) return;
 
-                // current pointer = activation point + cumulative delta from dnd-kit
                 const currentX = origin.x + event.delta.x;
                 const currentY = origin.y + event.delta.y;
 
@@ -243,7 +240,6 @@ export function EditorLayout({
                         }
                     ).__pendingDropPosition = { x: ghost.x, y: ghost.y };
 
-                    // ДОДАЄМО ЦЕ: Зберігаємо розсунуту сітку (без привида)
                     const layoutsWithoutGhost = liveLayouts.filter(
                         (l) => l.id !== SIDEBAR_GHOST_ID,
                     );

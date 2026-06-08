@@ -121,28 +121,21 @@ export function getWidgetContainerStyle(widget: Widget, layout: WidgetLayout) {
             ? `widget-hover-${ap.hoverAnimation}`
             : '';
 
-    // Універсальна функція стилів для віджета.
-    // Максимально відповідає "нормальному" (не-dragging, не-selected) стану з WidgetCell.tsx
-    // + забезпечує повну підтримку hover-анімацій у PortfolioPreview.tsx та page.tsx (public).
     const className = hoverClass ? `group ${hoverClass}` : 'group';
 
     const style: React.CSSProperties = {
-        // geometry
         width: gridToPx(layout.w),
         height: gridToPx(layout.h),
 
-        // візуал — точно як innerStyle WidgetCell у звичайному стані
         background: bgColor,
         border: '1.5px solid transparent',
         borderRadius,
         padding: '16px',
         overflow: 'hidden',
 
-        // транзишни з WidgetCell (outer + inner) — підтримка анімацій hover, плавна зміна розміру
         transition:
             'transform 0.25s ease-out, width 0.2s ease-out, height 0.2s ease-out, box-shadow 0.2s, opacity 0.2s',
 
-        // CSS vars, які використовує widget-hover-animation.css та логіка glow/lift у редакторі
         '--widget-bg': bgColor,
         '--pos-x': '0px',
         '--pos-y': '0px',

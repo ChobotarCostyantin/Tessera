@@ -29,7 +29,6 @@ interface BentoGridProps {
     sidebarGhostWidget: Widget | null;
 }
 
-// Main layout component orchestrating the drag-and-drop grid area
 export function BentoGrid({
     widgets,
     layouts,
@@ -44,12 +43,10 @@ export function BentoGrid({
     sidebarGhostId,
     sidebarGhostWidget,
 }: BentoGridProps) {
-    // Sync external layout changes when no drag is active
     useEffect(() => {
         if (!draggingId && !sidebarGhostWidget) setLiveLayouts(layouts);
     }, [layouts, draggingId, sidebarGhostWidget, setLiveLayouts]);
 
-    // Handles resizing of a single widget and triggers collision resolution
     const handleResize = useCallback(
         (id: string, w: number, h: number) => {
             const draft = layouts.map((l) =>
@@ -60,7 +57,6 @@ export function BentoGrid({
         [layouts, onLayoutChange],
     );
 
-    // Grid-drag ghost (existing widget being moved)
     const activeLiveLayout = draggingId
         ? liveLayouts.find((l) => l.id === draggingId)
         : null;
@@ -68,7 +64,6 @@ export function BentoGrid({
         ? widgets.find((w) => w.id === draggingId)
         : null;
 
-    // Sidebar-drag ghost (new widget being dragged in from sidebar)
     const sidebarGhostLayout = sidebarGhostWidget
         ? liveLayouts.find((l) => l.id === sidebarGhostId)
         : null;
@@ -79,7 +74,6 @@ export function BentoGrid({
 
     return (
         <main className="flex-1 overflow-auto p-6 flex flex-col">
-            {/* Grid info header */}
             <div className="flex items-center justify-center gap-2 mb-4">
                 <span
                     className="text-[11px]"
@@ -96,7 +90,6 @@ export function BentoGrid({
                 </span>
             </div>
 
-            {/* Main canvas area equipped with dnd-kit drop zone */}
             <div
                 className="relative mx-auto"
                 data-canvas="true"
@@ -104,7 +97,6 @@ export function BentoGrid({
             >
                 <GridDropZone />
 
-                {/* A4 page boundary indicator with accurate grid background */}
                 <div
                     className="absolute pointer-events-none z-0"
                     style={{
@@ -136,7 +128,6 @@ export function BentoGrid({
                     }}
                 ></div>
 
-                {/* Ghost for existing widget being moved inside the grid */}
                 {activeLiveLayout && draggingWidget && (
                     <div
                         className="absolute top-0 left-0 pointer-events-none z-0 transition-transform duration-150 ease-out"
@@ -150,7 +141,6 @@ export function BentoGrid({
                     </div>
                 )}
 
-                {/* Ghost for new widget being dragged in from the sidebar */}
                 {sidebarGhostLayout && sidebarGhostWidget && (
                     <div
                         className="absolute top-0 left-0 pointer-events-none z-10 transition-transform duration-100 ease-out"
@@ -164,7 +154,6 @@ export function BentoGrid({
                     </div>
                 )}
 
-                {/* Render all real widgets mapped to their live or finalized layouts */}
                 {widgets.map((widget) => {
                     const isDragging = draggingId === widget.id;
                     const layoutToUse = isDragging

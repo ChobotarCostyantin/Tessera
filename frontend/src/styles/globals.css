@@ -4,7 +4,6 @@
     --background: #ffffff;
     --foreground: #171717;
 
-    /* Tessera theme tokens */
     --t-bg:       #0f0f10;
     --t-surface:  #1a1a1d;
     --t-surface2: #242428;
@@ -30,9 +29,6 @@ body {
 
 * { box-sizing: border-box; }
 
-/* ── react-grid-layout overrides ── */
-
-/* Remove default outline on grid items */
 .react-grid-item.react-grid-placeholder {
     background: rgba(200, 255, 87, 0.08) !important;
     border: 1.5px dashed rgba(200, 255, 87, 0.4) !important;
@@ -40,7 +36,6 @@ body {
     opacity: 1 !important;
 }
 
-/* Resize handle */
 .react-resizable-handle {
     opacity: 0;
     transition: opacity 0.15s;
@@ -55,7 +50,6 @@ body {
     height: 8px !important;
 }
 
-/* Thin scrollbar */
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb {

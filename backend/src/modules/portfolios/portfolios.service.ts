@@ -15,8 +15,6 @@ import {
 export class PortfoliosService {
     constructor(private readonly prisma: PrismaService) {}
 
-    // ── Helpers ──────────────────────────────────────────────────────────────
-
     private async findOwnedOrThrow(id: string, ownerToken: string) {
         const portfolio = await this.prisma.portfolio.findUnique({
             where: { id },
@@ -27,9 +25,6 @@ export class PortfoliosService {
         return portfolio;
     }
 
-    // ── Public API ───────────────────────────────────────────────────────────
-
-    /** Create a new portfolios draft (called once, on first publish) */
     async create(dto: CreatePortfolioDto, ownerToken: string) {
         const exists = await this.prisma.portfolio.findUnique({
             where: { slug: dto.slug },
@@ -47,7 +42,6 @@ export class PortfoliosService {
         });
     }
 
-    /** Auto-save: update pageConfig only (no slug/title changes) */
     async updateConfig(id: string, dto: UpdateConfigDto, ownerToken: string) {
         await this.findOwnedOrThrow(id, ownerToken);
 
@@ -57,7 +51,6 @@ export class PortfoliosService {
         });
     }
 
-    /** Publish: set isPublished=true, optionally update slug+title */
     async publish(id: string, dto: PublishPortfolioDto, ownerToken: string) {
         await this.findOwnedOrThrow(id, ownerToken);
 
@@ -77,7 +70,6 @@ export class PortfoliosService {
         });
     }
 
-    /** Unpublish */
     async unpublish(id: string, ownerToken: string) {
         await this.findOwnedOrThrow(id, ownerToken);
 
@@ -87,7 +79,6 @@ export class PortfoliosService {
         });
     }
 
-    /** Get all portfolios belonging to ownerToken */
     async findAllByOwner(ownerToken: string) {
         return this.prisma.portfolio.findMany({
             where: { ownerToken },
@@ -102,12 +93,10 @@ export class PortfoliosService {
         });
     }
 
-    /** Get one portfolios (owner access) — returns full pageConfig */
     async findOneByOwner(id: string, ownerToken: string) {
         return this.findOwnedOrThrow(id, ownerToken);
     }
 
-    /** Get published portfolios by slug — public route, no auth */
     async findPublicBySlug(slug: string) {
         const portfolio = await this.prisma.portfolio.findUnique({
             where: { slug },
@@ -127,7 +116,6 @@ export class PortfoliosService {
         return portfolio;
     }
 
-    /** Delete a portfolios */
     async remove(id: string, ownerToken: string) {
         await this.findOwnedOrThrow(id, ownerToken);
         await this.prisma.portfolio.delete({ where: { id } });

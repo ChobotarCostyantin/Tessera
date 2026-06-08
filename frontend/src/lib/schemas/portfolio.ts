@@ -2,8 +2,6 @@ import { z } from 'zod';
 
 const SLUG_REGEX = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-// ── Request schemas ───────────────────────────────────────────────────────────
-
 export const CreatePortfolioSchema = z.object({
     slug: z
         .string()
@@ -24,8 +22,6 @@ export const PublishPortfolioSchema = z.object({
         .regex(SLUG_REGEX, 'Only lowercase letters, numbers, and hyphens'),
     title: z.string().min(1, 'Title is required'),
 });
-
-// ── Response schemas ──────────────────────────────────────────────────────────
 
 export const PortfolioSummarySchema = z.object({
     id: z.string(),
@@ -53,8 +49,6 @@ export const PublicPortfolioSchema = z.object({
     isPublished: z.boolean(),
     pageConfig: z.record(z.string(), z.unknown()),
 });
-
-// ── Types ─────────────────────────────────────────────────────────────────────
 
 export type CreatePortfolioDto = z.infer<typeof CreatePortfolioSchema>;
 export type UpdateConfigDto = z.infer<typeof UpdateConfigSchema>;

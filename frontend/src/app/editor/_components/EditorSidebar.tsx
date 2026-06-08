@@ -9,7 +9,6 @@ interface EditorSidebarProps {
     onAddWidget: (type: Widget['type']) => void;
 }
 
-// Each sidebar widget button is draggable with fromSidebar=true
 function DraggableWidgetButton({
     item,
     onAddWidget,
@@ -76,7 +75,6 @@ export function EditorSidebar({ onAddWidget }: EditorSidebarProps) {
                 background: 'var(--t-surface)',
             }}
         >
-            {/* Widgets */}
             <div>
                 <p
                     className="text-[10px] font-semibold uppercase tracking-[0.08em] mb-2 px-1"

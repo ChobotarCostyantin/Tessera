@@ -37,14 +37,12 @@ export function useAutosave({
 
         const serializedConfig = JSON.stringify(config);
 
-        // пропускаємо перший render
         if (isFirstRender.current) {
             isFirstRender.current = false;
             lastSavedConfigRef.current = serializedConfig;
             return;
         }
 
-        // якщо дані не змінились — нічого не робимо
         if (serializedConfig === lastSavedConfigRef.current) {
             return;
         }
@@ -53,7 +51,6 @@ export function useAutosave({
 
         notify('pending');
 
-        // reset debounce timer
         if (timerRef.current) {
             clearTimeout(timerRef.current);
         }

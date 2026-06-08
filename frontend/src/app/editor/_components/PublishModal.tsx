@@ -40,7 +40,6 @@ export function PublishModal({
     const [apiError, setApiError] = useState('');
     const [tab, setTab] = useState<'form' | 'preview'>('form');
 
-    // Auto-generate slug from title
     const handleTitleChange = useCallback((val: string) => {
         setTitle(val);
         setSlug(
@@ -53,7 +52,6 @@ export function PublishModal({
         );
     }, []);
 
-    // Reset state when modal closes
     useEffect(() => {
         if (!isOpen) {
             setErrors({});
@@ -86,7 +84,6 @@ export function PublishModal({
             let id = portfolioId;
 
             if (!id) {
-                // First publish: create record then publish
                 const created = await createPortfolio({
                     slug: result.data.slug,
                     title: result.data.title,
@@ -105,7 +102,6 @@ export function PublishModal({
         } catch (err: unknown) {
             const msg =
                 err instanceof Error ? err.message : 'Something went wrong';
-            // Handle conflict (slug taken)
             if (msg.includes('409') || msg.toLowerCase().includes('conflict')) {
                 setErrors({ slug: 'This slug is already taken' });
             } else {
@@ -133,7 +129,6 @@ export function PublishModal({
         }
     }, [portfolioId, onUnpublished, onClose]);
 
-    // Close on Escape
     useEffect(() => {
         if (!isOpen) return;
         const handler = (e: KeyboardEvent) => {
@@ -149,7 +144,6 @@ export function PublishModal({
 
     return (
         <>
-            {/* Backdrop */}
             <div
                 className="fixed inset-0 z-40"
                 style={{
@@ -159,7 +153,6 @@ export function PublishModal({
                 onClick={onClose}
             />
 
-            {/* Modal */}
             <div
                 className="fixed inset-0 z-50 flex items-center justify-center p-4"
                 style={{ pointerEvents: 'none' }}
@@ -174,7 +167,6 @@ export function PublishModal({
                         pointerEvents: 'auto',
                     }}
                 >
-                    {/* Header */}
                     <div
                         className="flex items-center justify-between px-6 py-4 shrink-0"
                         style={{ borderBottom: '0.5px solid var(--t-border)' }}
@@ -245,7 +237,6 @@ export function PublishModal({
                         </button>
                     </div>
 
-                    {/* Body */}
                     <div className="flex flex-1 overflow-hidden justify-center">
                         {tab === 'form' ? (
                             <FormPanel
@@ -277,8 +268,6 @@ export function PublishModal({
         </>
     );
 }
-
-// ── Form panel ────────────────────────────────────────────────────────────────
 
 interface FormPanelProps {
     title: string;
@@ -323,7 +312,6 @@ function FormPanel({
                     Choose a memorable title and a clean slug.
                 </p>
 
-                {/* Title field */}
                 <Field
                     label="Portfolio title"
                     error={errors.title}
@@ -338,7 +326,6 @@ function FormPanel({
                     />
                 </Field>
 
-                {/* Slug field */}
                 <Field
                     label="URL slug"
                     error={errors.slug}
@@ -373,7 +360,6 @@ function FormPanel({
                     </div>
                 </Field>
 
-                {/* Public URL preview */}
                 <div
                     className="rounded-xl px-4 py-3"
                     style={{
@@ -395,7 +381,6 @@ function FormPanel({
                     </p>
                 </div>
 
-                {/* API error */}
                 {apiError && (
                     <div
                         className="rounded-xl px-4 py-3 text-[12px]"
@@ -410,7 +395,6 @@ function FormPanel({
                 )}
             </div>
 
-            {/* Actions */}
             <div className="flex gap-3">
                 <button
                     onClick={onClose}
@@ -465,8 +449,6 @@ function FormPanel({
         </div>
     );
 }
-
-// ── Field wrapper ─────────────────────────────────────────────────────────────
 
 function Field({
     label,

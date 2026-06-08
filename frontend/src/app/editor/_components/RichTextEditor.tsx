@@ -9,7 +9,6 @@ import { FontFamily } from '@tiptap/extension-font-family';
 import { Underline } from '@tiptap/extension-underline';
 import { Extension } from '@tiptap/core';
 
-// ── FontSize custom extension ────────────────────────────────────────────────
 const FontSize = Extension.create({
     name: 'fontSize',
     addOptions() {
@@ -22,11 +21,6 @@ const FontSize = Extension.create({
                 attributes: {
                     fontSize: {
                         default: null,
-                        parseHTML: (el) => el.style.fontSize || null,
-                        renderHTML: (attrs) =>
-                            attrs.fontSize
-                                ? { style: `font-size:${attrs.fontSize}` }
-                                : {},
                     },
                 },
             },
@@ -46,7 +40,6 @@ const FontSize = Extension.create({
     },
 });
 
-// ── Toolbar button ────────────────────────────────────────────────────────────
 function ToolBtn({
     active,
     onClick,
@@ -85,7 +78,6 @@ function ToolBtn({
     );
 }
 
-// ── Font options ──────────────────────────────────────────────────────────────
 const FONTS = [
     { label: 'Default', value: '' },
     { label: 'DM Sans', value: "'DM Sans', sans-serif" },
@@ -95,22 +87,9 @@ const FONTS = [
 ];
 
 const FONT_SIZES = [
-    '10',
-    '11',
-    '12',
-    '13',
-    '14',
-    '16',
-    '18',
-    '20',
-    '24',
-    '28',
-    '32',
-    '36',
-    '48',
+    '10', '11', '12', '13', '14', '16', '18', '20', '24', '28', '32', '36', '48',
 ];
 
-// ── Main component ────────────────────────────────────────────────────────────
 interface RichTextEditorProps {
     value: string;
     onChange: (html: string) => void;
@@ -177,7 +156,6 @@ export function RichTextEditor({
                 overflow: 'hidden',
             }}
         >
-            {/* Toolbar */}
             <div
                 style={{
                     display: 'flex',
@@ -188,7 +166,6 @@ export function RichTextEditor({
                     alignItems: 'center',
                 }}
             >
-                {/* Bold / Italic / Underline / Strike */}
                 <ToolBtn
                     active={editor.isActive('bold')}
                     onClick={() => editor.chain().focus().toggleBold().run()}
@@ -220,7 +197,6 @@ export function RichTextEditor({
                     <s>S</s>
                 </ToolBtn>
 
-                {/* Divider */}
                 <div
                     style={{
                         width: 1,
@@ -230,7 +206,6 @@ export function RichTextEditor({
                     }}
                 />
 
-                {/* Font family */}
                 <select
                     title="Font family"
                     value={editor.getAttributes('textStyle').fontFamily || ''}
@@ -263,7 +238,6 @@ export function RichTextEditor({
                     ))}
                 </select>
 
-                {/* Font size */}
                 <select
                     title="Font size"
                     value={
@@ -302,7 +276,6 @@ export function RichTextEditor({
                     ))}
                 </select>
 
-                {/* Divider */}
                 <div
                     style={{
                         width: 1,
@@ -312,7 +285,6 @@ export function RichTextEditor({
                     }}
                 />
 
-                {/* Text color */}
                 <label
                     title="Text color"
                     style={{
@@ -351,7 +323,6 @@ export function RichTextEditor({
                     />
                 </label>
 
-                {/* Clear formatting */}
                 <ToolBtn
                     onClick={() =>
                         editor
@@ -367,7 +338,6 @@ export function RichTextEditor({
                 </ToolBtn>
             </div>
 
-            {/* Editor area */}
             <div style={{ padding: '2px 4px' }}>
                 <EditorContent editor={editor} />
             </div>

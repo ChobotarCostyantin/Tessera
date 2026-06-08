@@ -12,7 +12,7 @@ import { useAutosave } from '@/hooks/useAutosave';
 
 const STORAGE_KEY = 'tessera:page-config-v2';
 const PORTFOLIO_ID_KEY = 'tessera:portfolio-id';
-const PORTFOLIO_SLUG_KEY = 'tessera:portfolio-slug'; // Додали ключ для slug
+const PORTFOLIO_SLUG_KEY = 'tessera:portfolio-slug';
 
 type AutosaveStatus = 'idle' | 'pending' | 'saving' | 'saved' | 'error';
 
@@ -97,7 +97,6 @@ export default function EditorPage() {
         if (savedPublished === 'true') setIsPublished(true);
     }, []);
 
-    // Persist config locally on every change
     useEffect(() => {
         if (typeof window === 'undefined') return;
         localStorage.setItem(STORAGE_KEY, JSON.stringify({ widgets, layouts }));
@@ -205,7 +204,6 @@ export default function EditorPage() {
                 fontFamily: "'DM Sans', sans-serif",
             }}
         >
-            {/* ── Header ─────────────────────────────────────────────────── */}
             <header
                 className="flex items-center justify-between px-5 py-3.5 shrink-0"
                 style={{
@@ -228,7 +226,6 @@ export default function EditorPage() {
                         </span>
                     </div>
 
-                    {/* Autosave indicator */}
                     {autosaveStatus !== 'idle' && (
                         <span
                             className="text-[11px] font-medium transition-all duration-300"
@@ -283,7 +280,6 @@ export default function EditorPage() {
                 </div>
             </header>
 
-            {/* ── Main ───────────────────────────────────────────────────── */}
             <div className="flex flex-1 overflow-hidden justify-between">
                 <EditorLayout
                     widgets={widgets}
@@ -302,7 +298,6 @@ export default function EditorPage() {
                 />
             </div>
 
-            {/* ── Publish modal ───────────────────────────────────────────── */}
             <PublishModal
                 isOpen={publishModalOpen}
                 onClose={() => setPublishModalOpen(false)}
@@ -314,7 +309,6 @@ export default function EditorPage() {
                 onUnpublished={handleUnpublished}
             />
 
-            {/* ── Toast ──────────────────────────────────────────────────── */}
             <div
                 className="fixed bottom-5 left-1/2 px-4 py-2.5 rounded-[10px] text-[12px] pointer-events-none z-50 transition-all duration-300"
                 style={{

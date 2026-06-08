@@ -86,7 +86,6 @@ export function WidgetCell({
                 className="relative w-full h-full overflow-hidden"
                 style={innerStyle}
             >
-                {/* Drag handle */}
                 <div
                     {...listeners}
                     {...attributes}
@@ -108,7 +107,6 @@ export function WidgetCell({
                     </div>
                 </div>
 
-                {/* Delete button */}
                 <button
                     className="absolute top-2 right-2 w-5 h-5 rounded-md text-[10px] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10"
                     style={{

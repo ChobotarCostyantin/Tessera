@@ -6,7 +6,6 @@ import {
     CELL_PX,
     GAP_PX,
     CANVAS_W,
-    gridToPx,
     getWidgetContainerStyle,
 } from '@/lib/widgetConfig';
 import '@/styles/widget-hover-animation.css';
@@ -28,7 +27,6 @@ export function PortfolioPreview({
     const [layouts, setLayouts] = useState<WidgetLayout[]>(initialLayouts);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Робимо запит в БД, якщо є portfolioId
     useEffect(() => {
         if (portfolioId) {
             setIsLoading(true);
@@ -45,7 +43,6 @@ export function PortfolioPreview({
                 )
                 .finally(() => setIsLoading(false));
         } else {
-            // Фолбек для першої публікації (коли ще немає запису в БД)
             setWidgets(initialWidgets);
             setLayouts(initialLayouts);
         }
@@ -54,7 +51,6 @@ export function PortfolioPreview({
     const maxRow = Math.max(10, ...layouts.map((l) => l.y + l.h));
     const canvasH = maxRow * (CELL_PX + GAP_PX) - GAP_PX;
 
-    // Scale to fit modal preview area
     const PREVIEW_MAX_W = 1000;
     const scale = Math.min(1, PREVIEW_MAX_W / CANVAS_W);
 

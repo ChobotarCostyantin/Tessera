@@ -12,8 +12,6 @@ interface InspectorProps {
     onDelete: (id: string) => void;
 }
 
-// ── Shared UI ─────────────────────────────────────────────────────────────────
-
 function Label({ children }: { children: React.ReactNode }) {
     return (
         <label
@@ -64,66 +62,6 @@ function PlainInput({
         />
     );
 }
-
-// function PlainTextArea({
-//                            value,
-//                            onChange,
-//                            placeholder,
-//                            minHeight = '64px',
-//                            helperText,
-//                        }: {
-//     value: string;
-//     onChange: (v: string) => void;
-//     placeholder?: string;
-//     minHeight?: string;
-//     helperText?: string;
-// }) {
-//     const [localValue, setLocalValue] = React.useState(value);
-//     const [isFocused, setIsFocused] = React.useState(false);
-//     React.useEffect(() => {
-//         if (!isFocused) {
-//             setLocalValue(value);
-//         }
-//     }, [value, isFocused]);
-//
-//     const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-//         setLocalValue(e.target.value); // Показуємо юзеру його сирий текст
-//         onChange(e.target.value);      // Відправляємо дані для збереження
-//     };
-//
-//     return (
-//         <>
-//             <textarea
-//                 className="w-full rounded-lg px-2.5 py-1.5 text-[12px] outline-none resize-none"
-//                 style={{
-//                     background: 'var(--t-surface2)',
-//                     border: '0.5px solid var(--t-border)',
-//                     color: 'var(--t-text)',
-//                     fontFamily: 'inherit',
-//                     minHeight,
-//                 }}
-//                 value={isFocused ? localValue : value}
-//                 onFocus={() => setIsFocused(true)}
-//                 onBlur={() => {
-//                     setIsFocused(false);
-//                     setLocalValue(value);
-//                 }}
-//                 placeholder={placeholder}
-//                 onChange={handleChange}
-//             />
-//             {helperText && (
-//                 <p
-//                     className="text-[10px] mt-1"
-//                     style={{ color: 'var(--t-muted)' }}
-//                 >
-//                     {helperText}
-//                 </p>
-//             )}
-//         </>
-//     );
-// }
-
-// ── Color picker popover ──────────────────────────────────────────────────────
 
 function ColorField({
     label,
@@ -222,8 +160,6 @@ function ColorField({
     );
 }
 
-// ── Slider ────────────────────────────────────────────────────────────────────
-
 function SliderField({
     label,
     value,
@@ -275,8 +211,6 @@ function SliderField({
         </div>
     );
 }
-
-// ── Hover animation select ────────────────────────────────────────────────────
 
 const HOVER_OPTIONS: {
     value: WidgetAppearance['hoverAnimation'];
@@ -354,8 +288,6 @@ function HoverAnimationField({
     );
 }
 
-// ── Tabs ──────────────────────────────────────────────────────────────────────
-
 type Tab = 'content' | 'style';
 
 function Tabs({
@@ -404,8 +336,6 @@ function Tabs({
     );
 }
 
-// ── Style tab ─────────────────────────────────────────────────────────────────
-
 function StyleTab({
     widget,
     onAppearanceChange,
@@ -438,8 +368,6 @@ function StyleTab({
     );
 }
 
-// ── Content tab ───────────────────────────────────────────────────────────────
-
 function ContentTab({
     widget,
     patch,
@@ -451,7 +379,7 @@ function ContentTab({
         const file = e.target.files?.[0];
         if (!file) return;
         if (file.size > 2 * 1024 * 1024) {
-            alert('Файл занадто великий! Максимум 2MB.');
+            alert('File is too big! 2MB maximum.');
             return;
         }
         const reader = new FileReader();
@@ -731,8 +659,6 @@ function ContentTab({
             return null;
     }
 }
-
-// ── Main component ────────────────────────────────────────────────────────────
 
 export function Inspector({ widget, onUpdate, onDelete }: InspectorProps) {
     const [tab, setTab] = useState<Tab>('content');

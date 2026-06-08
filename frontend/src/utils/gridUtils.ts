@@ -1,5 +1,5 @@
 import { WidgetLayout } from '@/types/widget';
-import { GRID_COLS } from '@/lib/widgetConfig'; // Додаємо імпорт
+import { GRID_COLS } from '@/lib/widgetConfig';
 
 export function findFreePosition(
     layouts: WidgetLayout[],

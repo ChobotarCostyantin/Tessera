@@ -12,8 +12,6 @@ import {
 } from '@/lib/schemas/portfolio';
 import { z } from 'zod';
 
-// ── Owner endpoints ───────────────────────────────────────────────────────────
-
 export async function listPortfolios(): Promise<PortfolioSummary[]> {
     return api.get('portfolios').json(z.array(PortfolioSummarySchema));
 }
@@ -53,8 +51,6 @@ export async function unpublishPortfolio(id: string): Promise<PortfolioFull> {
 export async function deletePortfolio(id: string): Promise<void> {
     await api.delete(`portfolios/${id}`);
 }
-
-// ── Public endpoint (no auth header needed) ───────────────────────────────────
 
 export async function getPublicPortfolio(
     slug: string,

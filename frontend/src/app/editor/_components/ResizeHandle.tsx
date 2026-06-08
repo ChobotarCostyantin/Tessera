@@ -8,7 +8,6 @@ interface ResizeHandleProps {
     onResize: (id: string, w: number, h: number) => void;
 }
 
-// Interactive corner element to drag and resize a widget on the grid
 export function ResizeHandle({
     widgetId,
     layout,
@@ -37,11 +36,9 @@ export function ResizeHandle({
                 const dx = ev.clientX - startRef.current.mouseX;
                 const dy = ev.clientY - startRef.current.mouseY;
 
-                // Calculate new dimensions based on mouse movement relative to cell size
                 const deltaW = Math.round(dx / (CELL_PX + GAP_PX));
                 const deltaH = Math.round(dy / (CELL_PX + GAP_PX));
 
-                // Constrain the new width to the grid boundaries and prevent size going below 1x1
                 const newW = Math.min(
                     GRID_COLS - layout.x,
                     Math.max(1, startRef.current.w + deltaW),

@@ -25,7 +25,6 @@ function parseConfig(raw: Record<string, unknown>): PageConfig {
     };
 }
 
-// Hook: tracks container width and returns scale factor for the canvas
 function useCanvasScale(canvasNativeWidth: number) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [scale, setScale] = useState(1);
@@ -67,7 +66,6 @@ export default function PublicPortfolioPage({
         });
     }, [params]);
 
-    // ── Loading ───────────────────────────────────────────────────────────────
     if (!portfolio && !error) {
         return (
             <Shell>
@@ -92,7 +90,6 @@ export default function PublicPortfolioPage({
         );
     }
 
-    // ── Not found ─────────────────────────────────────────────────────────────
     if (error === 'not_found') {
         return (
             <Shell>
@@ -123,7 +120,6 @@ export default function PublicPortfolioPage({
         );
     }
 
-    // ── Error ─────────────────────────────────────────────────────────────────
     if (error === 'error') {
         return (
             <Shell>
@@ -167,10 +163,6 @@ export default function PublicPortfolioPage({
     );
 }
 
-// ── ScaledCanvas ──────────────────────────────────────────────────────────────
-// Renders the bento grid scaled down to fit any viewport width.
-// Uses ResizeObserver so it reacts to orientation changes too.
-
 function ScaledCanvas({
     widgets,
     layouts,
@@ -184,12 +176,7 @@ function ScaledCanvas({
     const canvasH = maxRow * (CELL_PX + GAP_PX) - GAP_PX;
 
     return (
-        // Outer div is measured by ResizeObserver — full available width
         <div ref={containerRef} style={{ width: '100%' }}>
-            {/*
-              Wrapper shrinks to the scaled canvas height so the page flow is correct.
-              Without this the scaled element still occupies its native height.
-            */}
             <div
                 style={{
                     width: CANVAS_W * scale,
@@ -198,7 +185,6 @@ function ScaledCanvas({
                     position: 'relative',
                 }}
             >
-                {/* Native-size canvas, scaled down via transform */}
                 <div
                     style={{
                         width: CANVAS_W,
@@ -244,8 +230,6 @@ function ScaledCanvas({
     );
 }
 
-// ── Shell layout ──────────────────────────────────────────────────────────────
-
 function Shell({
     children,
     title,
@@ -263,7 +247,6 @@ function Shell({
                 fontFamily: "'DM Sans', sans-serif",
             }}
         >
-            {/* Nav */}
             <nav
                 className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 sm:px-6 sm:py-4"
                 style={{
@@ -272,7 +255,6 @@ function Shell({
                     borderBottom: '0.5px solid var(--t-border)',
                 }}
             >
-                {/* Logo */}
                 <a
                     href="/editor"
                     className="flex items-center gap-2 text-[14px] font-semibold tracking-tight no-underline shrink-0"
@@ -285,7 +267,6 @@ function Shell({
                     Tessera
                 </a>
 
-                {/* Title — hidden on very small screens to avoid crowding */}
                 {title && (
                     <span
                         className="hidden sm:block text-[14px] truncate mx-4"
@@ -298,7 +279,6 @@ function Shell({
                     </span>
                 )}
 
-                {/* CTA */}
                 <a
                     href="/editor"
                     className="px-3 py-1.5 rounded-lg text-[12px] font-medium no-underline shrink-0"
@@ -308,13 +288,11 @@ function Shell({
                         border: '0.5px solid var(--t-border)',
                     }}
                 >
-                    {/* Short label on mobile, full on desktop */}
                     <span className="sm:hidden">Create →</span>
                     <span className="hidden sm:inline">Create yours →</span>
                 </a>
             </nav>
 
-            {/* Title shown below nav on mobile */}
             {title && (
                 <div
                     className="sm:hidden px-4 pt-5 pb-1 text-center text-[18px] font-semibold truncate"
