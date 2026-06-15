@@ -378,8 +378,8 @@ function ContentTab({
     const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (!file) return;
-        if (file.size > 2 * 1024 * 1024) {
-            alert('File is too big! 2MB maximum.');
+        if (file.size > 10 * 1024 * 1024) {
+            alert('File is too big! 10MB maximum.');
             return;
         }
         const reader = new FileReader();
@@ -641,7 +641,7 @@ function ContentTab({
                                 items: [
                                     ...(widget.items || []),
                                     {
-                                        label: '<p>New skill</p>',
+                                        label: 'New skill',
                                         progress: 50,
                                         color: '#a89bff',
                                     },
